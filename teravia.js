@@ -1,40 +1,9 @@
-(function(){
+function(){
   window.TV = {
     data: {
       nation: '',
       race: '',
-      raceDetail: '',
-      job: ''
-    },
-    
-    setNation: function(el) {
-      this.data.nation = el.dataset.nation;
-      this.updateSummary();
-    },
-    
-    setRace: function(el) {
-      var self = this;
-      document.querySelectorAll('.tv-r-opt').forEach(function(o) {
-        o.classList.remove('selected');
-      });
-      el.classList.add('selected');
-      
-      var race = el.dataset.race;
-      var detail = '';
-      
-      if (race === '妖精') {
-        var input = document.getElementById('yokaiInput');
-        if (input && input.value.trim()) detail = input.value.trim();
-      } else if (race === '物灵') {
-        var input = document.getElementById('wulingInput');
-        if (input && input.value.trim()) detail = input.value.trim();
-      }
-      
-      self.data.race = race;
-      self.data.raceDetail = detail;
-      self.updateSummary();
-      
-      setTimeout(function() {
+      raceDetail      setTimeout(function() {
         var radio = document.getElementById('tv-p4');
         if (radio) radio.checked = true;
       }, 350);
