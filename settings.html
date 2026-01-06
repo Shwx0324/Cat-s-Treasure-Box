@@ -1,0 +1,100 @@
+<div id="mp_settings_container">
+    <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+            <b>🎵 迷你音乐播放器</b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+        </div>
+        <div class="inline-drawer-content">
+            <!-- 网易云音乐 -->
+            <div class="mp_block">
+                <div class="mp_title">☁️ 网易云音乐</div>
+                <div id="mp_netease_status" class="mp_status_row">
+                    <span class="mp_dot offline"></span>
+                    <span class="mp_text">未登录</span>
+                </div>
+                <div id="mp_netease_user" class="mp_user" style="display:none;">
+                    <img class="mp_avatar" src="" alt="">
+                    <span class="mp_uname"></span>
+                </div>
+                <div class="mp_btns">
+                    <input type="button" id="mp_netease_login" class="menu_button" value="扫码登录">
+                    <input type="button" id="mp_netease_logout" class="menu_button" value="退出" style="display:none;">
+                </div>
+            </div>
+
+            <!-- QQ音乐 -->
+            <div class="mp_block">
+                <div class="mp_title">🎵 QQ音乐</div>
+                <div id="mp_qq_status" class="mp_status_row">
+                    <span class="mp_dot offline"></span>
+                    <span class="mp_text">未登录</span>
+                </div>
+                <div id="mp_qq_user" class="mp_user" style="display:none;">
+                    <img class="mp_avatar" src="" alt="">
+                    <span class="mp_uname"></span>
+                </div>
+                <div class="mp_btns">
+                    <input type="button" id="mp_qq_login" class="menu_button" value="扫码登录">
+                    <input type="button" id="mp_qq_logout" class="menu_button" value="退出" style="display:none;">
+                </div>
+            </div>
+
+            <!-- 设置 -->
+            <div class="mp_block">
+                <div class="mp_title">⚙️ 设置</div>
+                <label class="checkbox_label">
+                    <input type="checkbox" id="mp_visible" checked>
+                    <span>显示播放器</span>
+                </label>
+                <label class="checkbox_label">
+                    <input type="checkbox" id="mp_autoplay">
+                    <span>自动播放</span>
+                </label>
+                <div class="mp_vol_row">
+                    <span>音量</span>
+                    <input type="range" id="mp_def_vol" min="0" max="100" value="50">
+                    <span id="mp_vol_num">50%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 二维码弹窗 -->
+<div id="mp_qr_modal" style="display:none;">
+    <div class="mp_qr_box">
+        <div class="mp_qr_head">
+            <span class="mp_qr_title">扫码登录</span>
+            <span id="mp_qr_close">✕</span>
+        </div>
+        <div class="mp_qr_body">
+            <div id="mp_qr_img"></div>
+            <div id="mp_qr_tip">点击二维码模拟登录</div>
+        </div>
+    </div>
+</div>
+
+<!-- 播放器 -->
+<div id="mp_player">
+    <div class="mp_main">
+        <div id="mp_song">未选择歌曲</div>
+        <div class="mp_ctrl">
+            <button id="mp_prev" title="上一首">⏮</button>
+            <button id="mp_play" title="播放">▶</button>
+            <button id="mp_next" title="下一首">⏭</button>
+            <input type="range" id="mp_vol" min="0" max="100" value="50" title="音量">
+            <button id="mp_list" title="播放列表">📁</button>
+            <button id="mp_min" title="最小化">➖</button>
+        </div>
+    </div>
+    <div id="mp_pl_panel" style="display:none;">
+        <div class="mp_pl_head">
+            <span>播放列表</span>
+            <label class="menu_button mp_add_label">
+                ➕ 添加
+                <input type="file" id="mp_files" accept="audio/*" multiple hidden>
+            </label>
+        </div>
+        <ul id="mp_pl_list"></ul>
+    </div>
+</div>
