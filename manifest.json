@@ -1,12 +1,12 @@
 {
-    "display_name": "Mini Music Player",
+    "display_name": "迷你音乐播放器",
     "loading_order": 100,
     "requires": [],
     "optional": [],
     "js": "index.js",
     "css": "style.css",
     "author": "shwx0324",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "homePage": "https://github.com/shwx0324/Cat-s-Treasure-Box",
     "auto_update": true
 }
