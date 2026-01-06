@@ -1,4 +1,4 @@
-import { extension_settings, getContext } from "../../../extensions.js";
+import { extension_settings } from "../../../extensions.js";
 import { saveSettingsDebounced } from "../../../../script.js";
 
 const extensionName = "music-player";
@@ -21,20 +21,387 @@ let isPlaying = false;
 let audio = null;
 
 // 加载设置
-function loadSettings() {
+async function loadSettings() {
     extension_settings[extensionName] = extension_settings[extensionName] || {};
     if (Object.keys(extension_settings[extensionName]).length === 0) {
         Object.assign(extension_settings[extensionName], defaultSettings);
     }
 }
 
-// 获取设置面板 HTML
-function getSettingsHTML() {
-    return `
-    <div class="music-player-settings">
-        <div class="inline-drawer">
-            <div class="inline-drawer-toggle inline-drawer-header">
-                <b>🎵 迷你音乐播放器</b>
+// 生成模拟二维码
+function generateFakeQR() {
+    let svg = '<svg viewBox="0 0 100 100" width="160" height="160"><rect fill="#fff" width="100" height="100"/>';
+    for (let i = 0; i < 20; i++) {
+        for (let j = 0; j < 20; j++) {
+            if (Math.random() > 0.5) {
+                svg += `<rect x="${i*5}" y="${j*5}" width="5" height="5" fill="#000"/>`;
+            }
+        }
+    }
+    svg += '<rect x="5" y="5" width="20" height="20" fill="#000"/><rect x="10" y="10" width="10" height="10" fill="#fff"/>';
+    svg += '<rect x="75" y="5" width="20" height="20" fill="#000"/><rect x="80" y="10" width="10" height="10" fill="#fff"/>';
+    svg += '<rect x="5" y="75" width="20" height="20" fill="#000"/><rect x="10" y="80" width="10" height="10" fill="#fff"/>';
+    svg += '</svg>';
+    return svg;
+}
+
+// 更新登录状态显示
+function updateLoginUI(platform) {
+    const settings = extension_settings[extensionName];
+    const data = settings[platform];
+    
+    const $status = $(`#mp_${platform}_status`);
+    const $user = $(`#mp_${platform}_user`);
+    const $loginBtn = $(`#mp_${platform}_login`);
+    const $logoutBtn = $(`#mp_${platform}_logout`);
+    
+    if (!$status.length) return;
+    
+    if (data && data.loggedIn) {
+        $status.find('.mp_status_dot').removeClass('offline').addClass('online');
+        $status.find('.mp_status_text').text('已登录');
+        $user.show().find('.mp_avatar').attr('src', data.avatar);
+        $user.find('.mp_name').text(data.username);
+        $loginBtn.hide();
+        $logoutBtn.show();
+    } else {
+        $status.find('.mp_status_dot').removeClass('online').addClass('offline');
+        $status.find('.mp_status_text').text('未登录');
+        $user.hide();
+        $loginBtn.show();
+        $logoutBtn.hide();
+    }
+}
+
+// 显示二维码弹窗
+function showQRModal(platform) {
+    const names = { netease: '网易云音乐', qq: 'QQ音乐' };
+    const $modal = $('#mp_qr_modal');
+    
+    $modal.find('.mp_qr_title').text(`${names[platform]} 扫码登录`);
+    $modal.find('.mp_qr_code').html(`<div class="mp_qr_box">${generateFakeQR()}</div>`);
+    $modal.find('.mp_qr_tip').text('点击二维码模拟登录');
+    $modal.data('platform', platform).fadeIn(200);
+    
+    $modal.find('.mp_qr_code').off('click').on('click', function() {
+        const p = $modal.data('platform');
+        $modal.find('.mp_qr_tip').text('✓ 登录成功！');
+        
+        setTimeout(() => {
+            extension_settings[extensionName][p] = {
+                loggedIn: true,
+                username: p === 'netease' ? '网易云用户' : 'QQ音乐用户',
+                avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${p}${Date.now()}`
+            };
+            saveSettingsDebounced();
+            updateLoginUI(p);
+            $modal.fadeOut(200);
+            toastr.success(`${names[p]} 登录成功！`);
+        }, 800);
+    });
+}
+
+// 退出登录
+function doLogout(platform) {
+    const names = { netease: '网易云音乐', qq: 'QQ音乐' };
+    extension_settings[extensionName][platform] = { loggedIn: false, username: '', avatar: '' };
+    saveSettingsDebounced();
+    updateLoginUI(platform);
+    toastr.info(`已退出 ${names[platform]}`);
+}
+
+// 加载歌曲
+function loadSong(index) {
+    if (playlist.length === 0) return;
+    currentIndex = index;
+    const song = playlist[index];
+    audio.src = song.url;
+    $('#mp_now_playing').text(song.name);
+    audio.play();
+    $('#mp_play_btn').text('⏸');
+    isPlaying = true;
+    renderPlaylist();
+}
+
+// 渲染播放列表
+function renderPlaylist() {
+    const $list = $('#mp_playlist_ul');
+    $list.empty();
+    playlist.forEach((song, i) => {
+        const $li = $(`<li class="${i === currentIndex ? 'active' : ''}">
+            <span class="mp_song_name">${song.name}</span>
+            <span class="mp_song_del" data-idx="${i}">✕</span>
+        </li>`);
+        $li.find('.mp_song_name').on('click', () => loadSong(i));
+        $li.find('.mp_song_del').on('click', function(e) {
+            e.stopPropagation();
+            const idx = parseInt($(this).data('idx'));
+            URL.revokeObjectURL(playlist[idx].url);
+            playlist.splice(idx, 1);
+            if (playlist.length === 0) {
+                audio.pause();
+                audio.src = '';
+                $('#mp_now_playing').text('未选择歌曲');
+                $('#mp_play_btn').text('▶');
+                isPlaying = false;
+            } else if (idx <= currentIndex) {
+                currentIndex = Math.max(0, currentIndex - 1);
+            }
+            renderPlaylist();
+        });
+        $list.append($li);
+    });
+}
+
+// 初始化设置面板
+function initSettings() {
+    const settings = extension_settings[extensionName];
+    
+    // 显示/隐藏播放器
+    $('#mp_show_player').prop('checked', settings.visible !== false).on('change', function() {
+        extension_settings[extensionName].visible = this.checked;
+        $('#mp_player').toggle(this.checked);
+        saveSettingsDebounced();
+    });
+    
+    // 自动播放
+    $('#mp_autoplay').prop('checked', settings.autoPlay === true).on('change', function() {
+        extension_settings[extensionName].autoPlay = this.checked;
+        saveSettingsDebounced();
+    });
+    
+    // 默认音量
+    $('#mp_volume_range').val(settings.volume || 50).on('input', function() {
+        const v = parseInt(this.value);
+        extension_settings[extensionName].volume = v;
+        $('#mp_volume_val').text(v + '%');
+        $('#mp_vol').val(v);
+        if (audio) audio.volume = v / 100;
+        saveSettingsDebounced();
+    });
+    $('#mp_volume_val').text((settings.volume || 50) + '%');
+    
+    // 登录/退出按钮
+    $('#mp_netease_login').on('click', () => showQRModal('netease'));
+    $('#mp_netease_logout').on('click', () => doLogout('netease'));
+    $('#mp_qq_login').on('click', () => showQRModal('qq'));
+    $('#mp_qq_logout').on('click', () => doLogout('qq'));
+    
+    // 二维码弹窗
+    $('#mp_qr_close, #mp_qr_modal').on('click', function(e) {
+        if (e.target === this || $(this).is('#mp_qr_close')) {
+            $('#mp_qr_modal').fadeOut(200);
+        }
+    });
+    $('.mp_qr_content').on('click', e => e.stopPropagation());
+    
+    // 更新登录状态
+    updateLoginUI('netease');
+    updateLoginUI('qq');
+}
+
+// 初始化播放器
+function initPlayer() {
+    const settings = extension_settings[extensionName];
+    audio = new Audio();
+    audio.volume = (settings.volume || 50) / 100;
+    
+    if (settings.visible === false) {
+        $('#mp_player').hide();
+    }
+    
+    // 播放/暂停
+    $('#mp_play_btn').on('click', function() {
+        if (playlist.length === 0) {
+            toastr.info('请先添加音乐');
+            return;
+        }
+        if (isPlaying) {
+            audio.pause();
+            $(this).text('▶');
+        } else {
+            audio.play();
+            $(this).text('⏸');
+        }
+        isPlaying = !isPlaying;
+    });
+    
+    // 上一首/下一首
+    $('#mp_prev_btn').on('click', () => {
+        if (playlist.length === 0) return;
+        currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+        loadSong(currentIndex);
+    });
+    $('#mp_next_btn').on('click', () => {
+        if (playlist.length === 0) return;
+        currentIndex = (currentIndex + 1) % playlist.length;
+        loadSong(currentIndex);
+    });
+    
+    // 音量
+    $('#mp_vol').val(settings.volume || 50).on('input', function() {
+        audio.volume = this.value / 100;
+    });
+    
+    // 播放列表切换
+    $('#mp_list_btn').on('click', () => $('#mp_playlist_panel').slideToggle(200));
+    
+    // 最小化
+    let minimized = false;
+    $('#mp_min_btn').on('click', function() {
+        minimized = !minimized;
+        if (minimized) {
+            $('#mp_now_playing, #mp_prev_btn, #mp_next_btn, #mp_vol, #mp_list_btn').hide();
+            $('#mp_playlist_panel').slideUp(200);
+            $(this).text('➕');
+        } else {
+            $('#mp_now_playing, #mp_prev_btn, #mp_next_btn, #mp_vol, #mp_list_btn').show();
+            $(this).text('➖');
+        }
+    });
+    
+    // 添加音乐
+    $('#mp_add_file').on('change', function() {
+        const files = Array.from(this.files);
+        const startIdx = playlist.length;
+        files.forEach(f => {
+            playlist.push({ name: f.name.replace(/\.[^/.]+$/, ''), url: URL.createObjectURL(f) });
+        });
+        renderPlaylist();
+        if (startIdx === 0 && playlist.length > 0) loadSong(0);
+        toastr.success(`已添加 ${files.length} 首歌曲`);
+        this.value = '';
+    });
+    
+    // 播放结束
+    audio.addEventListener('ended', () => {
+        currentIndex = (currentIndex + 1) % playlist.length;
+        if (playlist.length > 0) loadSong(currentIndex);
+    });
+}
+
+// 设置面板HTML - 完全按照 SillyTavern 格式
+const settingsHtml = `
+<div class="mp_settings">
+    <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+            <b>🎵 迷你音乐播放器</b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+        </div>
+        <div class="inline-drawer-content">
+            <div class="mp_section">
+                <div class="mp_section_title">☁️ 网易云音乐</div>
+                <div id="mp_netease_status" class="mp_login_row">
+                    <span class="mp_status_dot offline"></span>
+                    <span class="mp_status_text">未登录</span>
+                </div>
+                <div id="mp_netease_user" class="mp_user_row" style="display:none;">
+                    <img class="mp_avatar" src="">
+                    <span class="mp_name"></span>
+                </div>
+                <div class="mp_btn_row">
+                    <input id="mp_netease_login" class="menu_button" type="button" value="扫码登录">
+                    <input id="mp_netease_logout" class="menu_button" type="button" value="退出登录" style="display:none;">
+                </div>
+            </div>
+            <div class="mp_section">
+                <div class="mp_section_title">🎵 QQ音乐</div>
+                <div id="mp_qq_status" class="mp_login_row">
+                    <span class="mp_status_dot offline"></span>
+                    <span class="mp_status_text">未登录</span>
+                </div>
+                <div id="mp_qq_user" class="mp_user_row" style="display:none;">
+                    <img class="mp_avatar" src="">
+                    <span class="mp_name"></span>
+                </div>
+                <div class="mp_btn_row">
+                    <input id="mp_qq_login" class="menu_button" type="button" value="扫码登录">
+                    <input id="mp_qq_logout" class="menu_button" type="button" value="退出登录" style="display:none;">
+                </div>
+            </div>
+            <div class="mp_section">
+                <div class="mp_section_title">⚙️ 播放器设置</div>
+                <label class="checkbox_label" for="mp_show_player">
+                    <input id="mp_show_player" type="checkbox" checked>
+                    显示播放器
+                </label>
+                <label class="checkbox_label" for="mp_autoplay">
+                    <input id="mp_autoplay" type="checkbox">
+                    自动播放
+                </label>
+                <div class="mp_range_row">
+                    <span>默认音量</span>
+                    <input id="mp_volume_range" type="range" min="0" max="100" value="50">
+                    <span id="mp_volume_val">50%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+`;
+
+// 二维码弹窗HTML
+const qrModalHtml = `
+<div id="mp_qr_modal" style="display:none;">
+    <div class="mp_qr_content">
+        <div class="mp_qr_header">
+            <span class="mp_qr_title">扫码登录</span>
+            <span id="mp_qr_close">✕</span>
+        </div>
+        <div class="mp_qr_body">
+            <div class="mp_qr_code"></div>
+            <div class="mp_qr_tip">请使用手机扫描</div>
+        </div>
+    </div>
+</div>
+`;
+
+// 播放器HTML
+const playerHtml = `
+<div id="mp_player">
+    <div class="mp_main">
+        <div id="mp_now_playing">未选择歌曲</div>
+        <div class="mp_controls">
+            <button id="mp_prev_btn">⏮</button>
+            <button id="mp_play_btn">▶</button>
+            <button id="mp_next_btn">⏭</button>
+            <input id="mp_vol" type="range" min="0" max="100" value="50">
+            <button id="mp_list_btn">📁</button>
+            <button id="mp_min_btn">➖</button>
+        </div>
+    </div>
+    <div id="mp_playlist_panel" style="display:none;">
+        <div class="mp_pl_header">
+            <span>播放列表</span>
+            <label class="menu_button mp_add_btn">
+                ➕ 添加
+                <input id="mp_add_file" type="file" accept="audio/*" multiple hidden>
+            </label>
+        </div>
+        <ul id="mp_playlist_ul"></ul>
+    </div>
+</div>
+`;
+
+// jQuery 入口点
+jQuery(async () => {
+    await loadSettings();
+    
+    // 插入设置面板到扩展设置区域
+    $("#extensions_settings").append(settingsHtml);
+    
+    // 插入二维码弹窗
+    $("body").append(qrModalHtml);
+    
+    // 插入播放器
+    $("body").append(playerHtml);
+    
+    // 初始化功能
+    initSettings();
+    initPlayer();
+    
+    console.log("[迷你音乐播放器] 加载完成");
+});                <b>🎵 迷你音乐播放器</b>
                 <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
             </div>
             <div class="inline-drawer-content">
