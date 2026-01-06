@@ -1,40 +1,297 @@
-/* 设置面板 */
+/* ===== 设置面板 ===== */
 #mp_settings_container .inline-drawer-content {
-    display: block !important;
-    padding: 8px;
+    padding: 10px;
 }
 
 .mp_block {
-    background: var(--SmartThemeBlurTintColor, rgba(30,30,50,0.5));
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 8px;
+    background: var(--SmartThemeBlurTintColor, rgba(30, 30, 50, 0.5));
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
 }
 
 .mp_title {
     font-weight: 600;
-    font-size: 13px;
+    font-size: 14px;
     margin-bottom: 8px;
 }
 
 .mp_status_row {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    margin-bottom: 6px;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 8px;
 }
 
 .mp_dot {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
+    display: inline-block;
 }
 
 .mp_dot.online {
     background: #22c55e;
-    box-shadow: 0 0 6px #22c55e;
+    box-shadow: 0 0 8px #22c55e;
 }
+
+.mp_dot.offline {
+    background: #666;
+}
+
+.mp_user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.mp_avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.mp_uname {
+    font-size: 13px;
+}
+
+.mp_btns {
+    display: flex;
+    gap: 8px;
+}
+
+.mp_btns .menu_button {
+    flex: 1;
+}
+
+.mp_vol_row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+.mp_vol_row input[type="range"] {
+    flex: 1;
+}
+
+/* ===== 二维码弹窗 ===== */
+#mp_qr_modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+}
+
+.mp_qr_box {
+    background: var(--SmartThemeBlurTintColor, #1a1a2e);
+    border-radius: 16px;
+    padding: 20px 24px;
+    min-width: 280px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mp_qr_head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.mp_qr_title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+#mp_qr_close {
+    cursor: pointer;
+    font-size: 20px;
+    opacity: 0.7;
+    padding: 4px 8px;
+}
+
+#mp_qr_close:hover {
+    opacity: 1;
+}
+
+.mp_qr_body {
+    text-align: center;
+}
+
+.mp_qr_code {
+    background: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    display: inline-block;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.mp_qr_code:hover {
+    transform: scale(1.03);
+}
+
+#mp_qr_tip {
+    margin-top: 14px;
+    font-size: 14px;
+    color: #60a5fa;
+}
+
+/* ===== 播放器 ===== */
+#mp_player {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.mp_main {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-radius: 14px;
+    padding: 12px 16px;
+    min-width: 280px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#mp_song {
+    color: #fff;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mp_ctrl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.mp_ctrl button {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.mp_ctrl button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+#mp_vol {
+    width: 60px;
+    accent-color: #4a90d9;
+}
+
+#mp_pl_panel {
+    background: rgba(22, 33, 62, 0.98);
+    border-radius: 10px;
+    margin-top: 8px;
+    padding: 12px;
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mp_pl_head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 13px;
+}
+
+.mp_add_label {
+    font-size: 12px !important;
+    padding: 5px 10px !important;
+    cursor: pointer;
+}
+
+#mp_pl_list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#mp_pl_list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 6px;
+    color: #ccc;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#mp_pl_list li:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+#mp_pl_list li.active {
+    background: rgba(74, 144, 217, 0.3);
+    color: #fff;
+}
+
+.mp_sname {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 8px;
+}
+
+.mp_sdel {
+    opacity: 0;
+    cursor: pointer;
+    padding: 4px 8px;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+#mp_pl_list li:hover .mp_sdel {
+    opacity: 1;
+}
+
+.mp_sdel:hover {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.2);
+    border-radius: 4px;
+}
+
+#mp_pl_panel::-webkit-scrollbar {
+    width: 5px;
+}
+
+#mp_pl_panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}}
 
 .mp_dot.offline {
     background: #666;
