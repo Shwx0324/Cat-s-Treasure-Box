@@ -1,40 +1,311 @@
-/* 隐藏类 */
-.hidden {
-    display: none !important;
-}
-
-/* ============ 设置面板样式 ============ */
-.music-player-settings {
-    margin-top: 10px;
-}
-
+/* ========== 设置面板 ========== */
 .music-player-settings .inline-drawer-content {
     padding: 10px;
 }
 
-.music-platform-section {
+.music-section {
     background: var(--SmartThemeBlurTintColor, rgba(0,0,0,0.2));
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 12px;
     margin-bottom: 10px;
 }
 
-.music-platform-section h4 {
+.music-section h4 {
     margin: 0 0 10px 0;
     font-size: 14px;
-    color: var(--SmartThemeBodyColor, #fff);
 }
 
-.login-status {
+.music-login-status {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    font-size: 13px;
 }
 
-.status-dot {
+.status-indicator {
     width: 10px;
     height: 10px;
+    border-radius: 50%;
+}
+
+.status-indicator.online {
+    background: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+}
+
+.status-indicator.offline {
+    background: #71717a;
+}
+
+.music-user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.music-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.music-username {
+    font-size: 13px;
+}
+
+.music-btn-group {
+    display: flex;
+    gap: 8px;
+}
+
+.music-volume-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+.music-volume-row input[type="range"] {
+    flex: 1;
+}
+
+/* ========== 二维码弹窗 ========== */
+#music-qr-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}
+
+.music-qr-content {
+    background: var(--SmartThemeBlurTintColor, #1e1e2e);
+    border-radius: 16px;
+    padding: 24px;
+    min-width: 300px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.music-qr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.music-qr-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+#music-qr-close {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: inherit;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#music-qr-close:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.music-qr-body {
+    text-align: center;
+}
+
+.music-qr-body p {
+    margin: 15px 0 10px;
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+#music-qr-status {
+    background: rgba(59,130,246,0.2);
+    color: #60a5fa;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    display: inline-block;
+}
+
+.qr-box {
+    background: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    display: inline-block;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.qr-box:hover {
+    transform: scale(1.03);
+}
+
+/* ========== 播放器 ========== */
+#mini-music-player {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.music-player-main {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-radius: 14px;
+    padding: 12px 16px;
+    min-width: 280px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.music-player-title {
+    color: #fff;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.music-player-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.music-player-controls button {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.music-player-controls button:hover {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.1);
+}
+
+#music-volume {
+    width: 60px;
+    accent-color: #4a90d9;
+}
+
+#music-playlist-panel {
+    background: rgba(22,33,62,0.98);
+    border-radius: 10px;
+    margin-top: 8px;
+    padding: 12px;
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.music-playlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 13px;
+}
+
+#music-add-btn {
+    font-size: 12px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#music-playlist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#music-playlist li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 6px;
+    color: #ccc;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#music-playlist li:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+#music-playlist li.active {
+    background: rgba(74,144,217,0.3);
+    color: #fff;
+}
+
+#music-playlist li .song-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 8px;
+}
+
+#music-playlist li .remove-btn {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    opacity: 0;
+    padding: 4px 8px;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+#music-playlist li:hover .remove-btn {
+    opacity: 1;
+}
+
+#music-playlist li .remove-btn:hover {
+    color: #f87171;
+    background: rgba(248,113,113,0.2);
+    border-radius: 4px;
+}
+
+/* 滚动条 */
+#music-playlist-panel::-webkit-scrollbar {
+    width: 5px;
+}
+
+#music-playlist-panel::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+}    height: 10px;
     border-radius: 50%;
 }
 
