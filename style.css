@@ -1,40 +1,290 @@
-/* ========== 设置面板 ========== */
-.music-player-settings .inline-drawer-content {
-    padding: 10px;
+/* ===== 设置面板 ===== */
+.mp_settings .inline-drawer-content {
+    display: block;
 }
 
-.music-section {
-    background: var(--SmartThemeBlurTintColor, rgba(0,0,0,0.2));
+.mp_section {
+    background: var(--SmartThemeBlurTintColor, rgba(0,0,0,0.3));
     border-radius: 10px;
-    padding: 12px;
+    padding: 10px 12px;
     margin-bottom: 10px;
 }
 
-.music-section h4 {
-    margin: 0 0 10px 0;
-    font-size: 14px;
-}
-
-.music-login-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.mp_section_title {
+    font-weight: 600;
     margin-bottom: 8px;
     font-size: 13px;
 }
 
-.status-indicator {
-    width: 10px;
-    height: 10px;
+.mp_login_row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 12px;
+}
+
+.mp_status_dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.mp_status_dot.online {
+    background: #22c55e;
+    box-shadow: 0 0 6px #22c55e;
+}
+
+.mp_status_dot.offline {
+    background: #6b7280;
+}
+
+.mp_user_row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
+    margin-bottom: 6px;
+}
+
+.mp_avatar {
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
 }
 
-.status-indicator.online {
-    background: #22c55e;
-    box-shadow: 0 0 8px #22c55e;
+.mp_name {
+    font-size: 12px;
 }
 
-.status-indicator.offline {
+.mp_btn_row {
+    display: flex;
+    gap: 6px;
+}
+
+.mp_btn_row .menu_button {
+    flex: 1;
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.mp_range_row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.mp_range_row input[type="range"] {
+    flex: 1;
+}
+
+/* ===== 二维码弹窗 ===== */
+#mp_qr_modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}
+
+.mp_qr_content {
+    background: var(--SmartThemeBlurTintColor, #1a1a2e);
+    border-radius: 14px;
+    padding: 20px;
+    min-width: 280px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.mp_qr_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.mp_qr_title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#mp_qr_close {
+    cursor: pointer;
+    opacity: 0.7;
+    font-size: 18px;
+}
+
+#mp_qr_close:hover {
+    opacity: 1;
+}
+
+.mp_qr_body {
+    text-align: center;
+}
+
+.mp_qr_box {
+    background: #fff;
+    padding: 12px;
+    border-radius: 10px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.mp_qr_box:hover {
+    transform: scale(1.02);
+}
+
+.mp_qr_tip {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #60a5fa;
+}
+
+/* ===== 播放器 ===== */
+#mp_player {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 9999;
+    font-family: system-ui, sans-serif;
+}
+
+.mp_main {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-radius: 12px;
+    padding: 10px 14px;
+    min-width: 260px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+#mp_now_playing {
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mp_controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.mp_controls button {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.mp_controls button:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+#mp_vol {
+    width: 50px;
+    accent-color: #4a90d9;
+}
+
+#mp_playlist_panel {
+    background: rgba(22,33,62,0.98);
+    border-radius: 10px;
+    margin-top: 8px;
+    padding: 10px;
+    max-height: 160px;
+    overflow-y: auto;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.mp_pl_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 12px;
+}
+
+.mp_add_btn {
+    font-size: 11px !important;
+    padding: 3px 8px !important;
+    cursor: pointer;
+}
+
+#mp_playlist_ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#mp_playlist_ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 5px;
+    color: #ccc;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+#mp_playlist_ul li:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+#mp_playlist_ul li.active {
+    background: rgba(74,144,217,0.3);
+    color: #fff;
+}
+
+.mp_song_name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 6px;
+}
+
+.mp_song_del {
+    opacity: 0;
+    cursor: pointer;
+    padding: 2px 6px;
+}
+
+#mp_playlist_ul li:hover .mp_song_del {
+    opacity: 1;
+}
+
+.mp_song_del:hover {
+    color: #f87171;
+}
+
+#mp_playlist_panel::-webkit-scrollbar {
+    width: 4px;
+}
+
+#mp_playlist_panel::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+}.status-indicator.offline {
     background: #71717a;
 }
 
