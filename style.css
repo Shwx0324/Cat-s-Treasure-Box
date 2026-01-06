@@ -1,3 +1,8 @@
+/* 隐藏类 */
+.hidden {
+    display: none !important;
+}
+
 /* ============ 设置面板样式 ============ */
 .music-player-settings {
     margin-top: 10px;
@@ -8,7 +13,7 @@
 }
 
 .music-platform-section {
-    background: var(--SmartThemeBlurTintColor);
+    background: var(--SmartThemeBlurTintColor, rgba(0,0,0,0.2));
     border-radius: 8px;
     padding: 12px;
     margin-bottom: 10px;
@@ -17,7 +22,7 @@
 .music-platform-section h4 {
     margin: 0 0 10px 0;
     font-size: 14px;
-    color: var(--SmartThemeBodyColor);
+    color: var(--SmartThemeBodyColor, #fff);
 }
 
 .login-status {
@@ -35,6 +40,361 @@
 
 .status-dot.online {
     background: #4ade80;
+    box-shadow: 0 0 6px #4ade80;
+}
+
+.status-dot.offline {
+    background: #6b7280;
+}
+
+.status-text {
+    font-size: 13px;
+    color: var(--SmartThemeBodyColor, #fff);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.user-name {
+    font-size: 13px;
+    color: var(--SmartThemeBodyColor, #fff);
+}
+
+.checkbox_label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: var(--SmartThemeBodyColor, #fff);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.volume-setting {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--SmartThemeBodyColor, #fff);
+}
+
+.volume-setting input[type="range"] {
+    flex: 1;
+}
+
+/* ============ 二维码弹窗样式 ============ */
+.qr-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+.qr-modal.hidden {
+    display: none !important;
+}
+
+.qr-modal-content {
+    background: var(--SmartThemeBlurTintColor, #1a1a2e);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 24px;
+    min-width: 320px;
+    max-width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.qr-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.qr-modal-header h3 {
+    margin: 0;
+    color: var(--SmartThemeBodyColor, #fff);
+    font-size: 18px;
+}
+
+.qr-close-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--SmartThemeBodyColor, #fff);
+    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.qr-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.qr-modal-body {
+    text-align: center;
+}
+
+#qr-code-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.qr-code-box {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.qr-code-box:hover {
+    transform: scale(1.03);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+.qr-placeholder {
+    width: 180px;
+    height: 180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f0f0f0;
+    border-radius: 8px;
+}
+
+.qr-loading {
+    color: #666;
+    font-size: 14px;
+}
+
+.qr-tip {
+    color: var(--SmartThemeBodyColor, #fff);
+    font-size: 13px;
+    opacity: 0.7;
+    margin-bottom: 15px;
+}
+
+.qr-status {
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.qr-status.waiting {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.qr-status.success {
+    background: rgba(74, 222, 128, 0.2);
+    color: #4ade80;
+}
+
+.qr-status.info {
+    background: rgba(96, 165, 250, 0.2);
+    color: #60a5fa;
+}
+
+/* ============ 播放器样式 ============ */
+#mini-music-player {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.player-container {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 12px 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    min-width: 280px;
+}
+
+.player-info {
+    color: #fff;
+    font-size: 13px;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+    text-align: center;
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.player-controls button {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-controls button:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.1);
+}
+
+#volume-slider {
+    width: 60px;
+    height: 4px;
+    cursor: pointer;
+    accent-color: #4a90d9;
+}
+
+#playlist-panel {
+    background: rgba(26, 26, 46, 0.95);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    margin-top: 10px;
+    padding: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.playlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+    font-size: 13px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+#add-music-btn {
+    background: linear-gradient(135deg, #4a90d9, #357abd);
+    border: none;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#add-music-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74, 144, 217, 0.4);
+}
+
+#playlist-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#playlist-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ccc;
+    font-size: 12px;
+    padding: 8px 10px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+    margin-bottom: 4px;
+}
+
+#playlist-list li:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+#playlist-list li.active {
+    background: rgba(74, 144, 217, 0.3);
+    color: #fff;
+}
+
+#playlist-list li .song-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px;
+}
+
+#playlist-list li .remove-song {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+#playlist-list li:hover .remove-song {
+    opacity: 1;
+}
+
+#playlist-list li .remove-song:hover {
+    background: rgba(248, 113, 113, 0.3);
+    color: #f87171;
+}
+
+/* 滚动条 */
+#playlist-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+#playlist-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#playlist-panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+#playlist-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}    background: #4ade80;
     box-shadow: 0 0 6px #4ade80;
 }
 
