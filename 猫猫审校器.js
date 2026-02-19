@@ -361,16 +361,31 @@
 
     function _addMenu(){
         if(!_jq)return;
-        var doc=(window.parent||window).document;
+        var doc;
+        try{doc=(window.parent||window).document;}catch(x){doc=document;}
         var menu=_jq('#extensionsMenu',doc);
-        if(!menu.length){setTimeout(_addMenu,2000);return;}
+        if(!menu.length){
+            try{menu=_jq('#extensionsMenu',document);}catch(x){}
+        }
+        if(!menu.length){
+            try{
+                if(window.parent&&window.parent.document){
+                    menu=_jq('#extensionsMenu',window.parent.document);
+                }
+            }catch(x){}
+        }
+        if(!menu.length){
+            if(_att<60){setTimeout(_addMenu,3000);}
+            return;
+        }
         if(_jq('#'+_id+'-mi',menu).length)return;
         var wrap=_jq('<div class="extension_container interactable" id="'+_id+'-mi" tabindex="0"></div>');
-        var item=_jq('<div class="list-group-item flex-container flexGap5interactable" title="猫猫审校器"><div class="fa-fw fa-solid fa-paw extensionsMenuExtensionButton"></div><span>猫猫审校器</span></div>');
+        var item=_jq('<div class="list-group-item flex-container flexGap5 interactable" title="猫猫审校器"><div class="fa-fw fa-solid fa-paw extensionsMenuExtensionButton"></div><span>猫猫审校器</span></div>');
         item.on('click',async function(ev){
             ev.stopPropagation();
             var btn=_jq('#extensionsMenuButton',doc);
-            if(btn.length&&menu.is(':visible')){btn.trigger('click');await new Promise(function(r){setTimeout(r,120);});}await _openUI();
+            if(btn.length&&menu.is(':visible')){btn.trigger('click');await new Promise(function(r){setTimeout(r,120);});}
+            await _openUI();
         });
         wrap.append(item);
         menu.append(wrap);
