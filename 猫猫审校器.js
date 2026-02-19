@@ -1,6 +1,6 @@
 (function(){
     'use strict';
-    var _id='maoProof',_ver='2.8.5',_flag=_id+'_v'+_ver,_popup=null,_busy=false,_activeStyle=null,_jq=null,_tt=null,_ok=false;
+    var _id='maoProof',_ver='2.8.6',_flag=_id+'_v'+_ver,_popup=null,_busy=false,_activeStyle=null,_jq=null,_tt=null,_ok=false;
     var K={ap:_id+'_ap',wd:_id+'_wd',pt:_id+'_pt',rl:_id+'_rl',sw:_id+'_sw',rt:_id+'_rt',tp:_id+'_tp',sp:_id+'_sp',si:_id+'_si',lw:_id+'_lw',spC:_id+'_spCustom',siC:_id+'_siCustom'};
     var TK=_id+'_themes',LK=_id+'_logs',PK=_id+'_prompts',RK=_id+'_rlpresets',CK=_id+'_checked';
     var C={url:'',key:'',mdl:'',sw:false,rt:0,tp:0.3,wd:[],pt:[],rl:'',sp:'',si:'',lw:[]};
@@ -19,7 +19,7 @@
 +'【修改要求】\n'
 +'1. 替换所有禁词为自然的近义表达\n'
 +'2. 超标的限制词替换为其他表达\n'
-+'3.禁用句式改写为其他自然表达\n'
++'3. 禁用句式改写为其他自然表达\n'
 +'4. 根据以上用户额外指令对文本进行润色改写\n'
 +'5. 如果用户没有额外指令，则只做禁词/限制词/句式的替换\n\n'
 +'【必须遵守】\n'
@@ -74,12 +74,19 @@
         var ratio=resLen/origLen;
         if(ratio<0.3)return{ok:false,reason:'返回文本过短('+Math.round(ratio*100)+'%)，疑似删除原文'};
         if(ratio>2.0)return{ok:false,reason:'返回文本过长('+Math.round(ratio*100)+'%)，疑似续写'};
+        var origParas=orig.split(/\n\s*\n/).filter(function(p){return p.trim();});
+        var resParas=result.split(/\n\s*\n/).filter(function(p){return p.trim();});
+        if(origParas.length>=3&&resParas.length<origParas.length*0.5){
+            return{ok:false,reason:'段落数减少过多('+origParas.length+'→'+resParas.length+')，疑似删减内容'};
+        }
         var origTags=_extractTags(orig);
         for(var i=0;i<origTags.length;i++){
             if(result.indexOf(origTags[i].full)<0){
                 var tagName=origTags[i].tag;
                 var reCheck=new RegExp('<'+tagName+'[^>]*>[\\s\\S]*?<\\/'+tagName+'>');
-                if(!reCheck.test(result))return{ok:false,reason:'标签<'+tagName+'>丢失'};
+                if(!reCheck.test(result)){
+                    console.warn('[猫猫审校]标签<'+tagName+'>在结果中未找到，但不拦截');
+                }
             }
         }
         return{ok:true};
@@ -188,8 +195,7 @@
                 _addLog(allFixes);await _applyResult(ctx,idx,msgData,currentText);_markChecked(idx,currentText);
                 var brief=allFixes.slice(0,3).map(function(f){return'「'+f.s+'」';}).join('、');
                 if(allFixes.length>3)brief+='…等'+allFixes.length+'处';
-                _msg('success','✅ '+brief+(maxRounds>1?' ('+maxRounds+'轮)':''),{timeOut:4000});
-                if(_popup)_refreshLog();
+                _msg('success','✅ '+brief+(maxRounds>1?' ('+maxRounds+'轮)':''),{timeOut:4000});if(_popup)_refreshLog();
             }else if(currentText!==orig){
                 await _applyResult(ctx,idx,msgData,currentText);_markChecked(idx,currentText);_msg('success','✅ 已修正',{timeOut:2000});
             }else{_markChecked(idx,orig);if(force)_msg('success','✅ 无需修正',{timeOut:1500});}
@@ -321,7 +327,7 @@
 
         popupFn(H,popupType.DISPLAY,'猫猫审校器',{wide:true,large:true,allowVerticalScrolling:true,buttons:[],callback:function(){_popup=null;}});
         setTimeout(function(){var f=null;_jq('dialog[open]').each(function(){var x=_jq(this).find('#'+_id+'-popup');if(x.length){f=x;return false;}});if(!f)return;_popup=f;_bindUI();_refreshLog();},350);
-        }
+            }
         function _bindUI(){
         if(!_popup)return;var P=_popup,J=_jq;
         P.find('.mp-tab').on('click',function(){var tab=J(this).attr('data-tab');P.find('.mp-tab').removeClass('active');J(this).addClass('active');P.find('.mp-page').removeClass('active');P.find('#mp-'+tab).addClass('active');});
@@ -382,7 +388,9 @@
         if(!bound&&evSrc&&evTypes&&evTypes.MESSAGE_RECEIVED){evSrc.on(evTypes.MESSAGE_RECEIVED,function(){_autoTrigger();});bound=true;}
         if(!bound&&typeof eventOn==='function'){var tevt=(typeof tavern_events!=='undefined')?tavern_events:((typeof event_types!=='undefined')?event_types:null);if(tevt&&tevt.GENERATION_ENDED){eventOn(tevt.GENERATION_ENDED,function(){_autoTrigger();});bound=true;}}
         var lastLen=0;var ctx0=_ctx();if(ctx0&&ctx0.chat)lastLen=ctx0.chat.length;
-        setInterval(function(){if(!C.sw||_busy)return;var ctx2=_ctx();if(!ctx2||!ctx2.chat)return;var n=ctx2.chat.length;if(n>lastLen&&n>0){var li=n-1;lastLen=n;var m=ctx2.chat[li];if(m&&!m.is_user&&!m.is_system){var txt=m.mes||'';if(_isChecked(li,txt))return;setTimeout(function(){if(_busy)return;var orig=m.mes||'';if(_isChecked(li,orig))return;var need=C.wd.some(function(ww){return ww.trim()&&orig.indexOf(ww.trim())>=0;})||_checkLimits(orig).length>0||(C.rl&&C.rl.trim())||C.pt.some(function(x){return x.trim();});if(need){_veil(li);_doCheck(li,false);}else{_markChecked(li,orig);}},bound?5000:2000);}}else lastLen=n;},3000);}
+        setInterval(function(){if(!C.sw||_busy)return;var ctx2=_ctx();if(!ctx2||!ctx2.chat)return;var n=ctx2.chat.length;if(n>lastLen&&n>0){var li=n-1;lastLen=n;var m=ctx2.chat[li];if(m&&!m.is_user&&!m.is_system){var txt=m.mes||'';if(_isChecked(li,txt))return;setTimeout(function(){if(_busy)return;var orig=m.mes||'';if(_isChecked(li,orig))return;var need=C.wd.some(function(ww){return ww.trim()&&orig.indexOf(ww.trim())>=0;})||_checkLimits(orig).length>0||(C.rl&&C.rl.trim())||C.pt.some(function(x){return x.trim();});if(need){_veil(li);_doCheck(li,false);}else{_markChecked(li,orig);}},bound?5000:2000);}}else lastLen=n;
+        },3000);
+    }
 
     function _checkReady(){var w=(typeof window.parent!=='undefined')?window.parent:window;_jq=(typeof jQuery!=='undefined')?jQuery:w.jQuery;if(!_jq&&typeof w.$!=='undefined')_jq=w.$;_tt=w.toastr||(typeof toastr!=='undefined'?toastr:null);var ctx=_ctx();_ok=!!(_jq&&ctx&&ctx.chat);return _ok;}
     var _att=0;
@@ -413,5 +421,6 @@
                 else{document.addEventListener('DOMContentLoaded',function(){setTimeout(_init,3000);});}
             }
         },200);
-        window[_id+'_cleanup']=function(){try{var doc=(window.parent||window).document;var el=doc.querySelector('#'+_id+'-mi');if(el)el.remove();}catch(x){}_ok=false;C.sw=false;};}
+        window[_id+'_cleanup']=function(){try{var doc=(window.parent||window).document;var el=doc.querySelector('#'+_id+'-mi');if(el)el.remove();}catch(x){}_ok=false;C.sw=false;};
+    }
 })();
