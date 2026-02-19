@@ -1,6 +1,5 @@
-(function(){
-    'use strict';
-    var _id='maoProof',_ver='2.8.7',_flag=_id+'_v'+_ver,_popup=null,_busy=false,_activeStyle=null,_jq=null,_tt=null,_ok=false,_hasUpdate=false,_remoteVer='';
+(function(){'use strict';
+    var _id='maoProof',_ver='2.8.8',_flag=_id+'_v'+_ver,_popup=null,_busy=false,_activeStyle=null,_jq=null,_tt=null,_ok=false,_hasUpdate=false,_remoteVer='';
     var K={ap:_id+'_ap',wd:_id+'_wd',pt:_id+'_pt',rl:_id+'_rl',sw:_id+'_sw',rt:_id+'_rt',tp:_id+'_tp',sp:_id+'_sp',si:_id+'_si',lw:_id+'_lw',spC:_id+'_spCustom',siC:_id+'_siCustom'};
     var TK=_id+'_themes',LK=_id+'_logs',PK=_id+'_prompts',RK=_id+'_rlpresets',CK=_id+'_checked';
     var C={url:'',key:'',mdl:'',sw:false,rt:0,tp:0.3,wd:[],pt:[],rl:'',sp:'',si:'',lw:[]};
@@ -19,7 +18,7 @@
 +'【修改要求】\n'
 +'1. 替换所有禁词为自然的近义表达\n'
 +'2. 超标的限制词替换为其他表达\n'
-+'3.禁用句式改写为其他自然表达\n'
++'3. 禁用句式改写为其他自然表达\n'
 +'4. 根据以上用户额外指令对文本进行润色改写\n'
 +'5. 如果用户没有额外指令，则只做禁词/限制词/句式的替换\n\n'
 +'【必须遵守】\n'
@@ -44,8 +43,7 @@
         {name:'❄️蓝白毛玻璃',css:'dialog[open]:has('+_P+'){background:rgba(240,246,255,0.75)!important;backdrop-filter:blur(24px)!important;-webkit-backdrop-filter:blur(24px)!important;border:1px solid rgba(255,255,255,0.45)!important;border-radius:20px!important;box-shadow:0 8px 32px rgba(100,140,220,0.18)!important}\n'+_P+' .mp-card{background:rgba(255,255,255,0.45)!important;border:1px solid rgba(255,255,255,0.55)!important}\n'+_P+' .mp-topbar{background:rgba(255,255,255,0.35)!important}\n'+_P+' .mp-b1,'+_P+' .mp-b-go{background:linear-gradient(135deg,#5b8def,#818cf8)!important}\n'+_P+' .mp-t1{background:linear-gradient(135deg,#5b8def,#a78bfa)!important;-webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important}\n'+_P+' .mp-tab.active{color:#5b8def!important;border-bottom-color:#5b8def!important}\n'+_P+' .mp-tabs{border-bottom-color:rgba(255,255,255,0.3)!important}\n'+_P+' .mp-count{color:#5b8def!important}\n'+_P+' .mp-in,'+_P+' .mp-ta{color:#1e3a5f!important;background:rgba(255,255,255,0.7)!important}\n'+_P+' .mp-lb{color:#2d4a7c!important}\n'+_P+' .mp-card-title{color:#1e3a5f!important}\n'+_P+' .mp-nt{color:#4a6fa5!important}\n'+_P+' .mp-topbar label{color:#1e3a5f!important}\n'+_P+' .mp-t2{color:#4a6fa5!important}'},
         {name:'🌙暗夜紫',css:'dialog[open]:has('+_P+'){background:rgba(30,20,50,0.88)!important;backdrop-filter:blur(20px)!important;border:1px solid rgba(139,92,246,0.3)!important;border-radius:18px!important}\n'+_P+'{color:#e2d9f3!important}\n'+_P+' .mp-card{background:rgba(60,40,90,0.5)!important;border-color:rgba(139,92,246,0.2)!important}\n'+_P+' .mp-topbar{background:rgba(50,30,75,0.5)!important}\n'+_P+' .mp-in,'+_P+' .mp-ta{background:rgba(40,25,65,0.6)!important;color:#e2d9f3!important;border-color:rgba(139,92,246,0.2)!important}\n'+_P+' .mp-b1,'+_P+' .mp-b-go{background:linear-gradient(135deg,#7c3aed,#a78bfa)!important}\n'+_P+' .mp-t1{background:linear-gradient(135deg,#a78bfa,#c084fc)!important;-webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important}\n'+_P+' .mp-tab{color:#8b7faa!important}\n'+_P+' .mp-tab.active{color:#c084fc!important;border-bottom-color:#c084fc!important}\n'+_P+' .mp-tabs{border-bottom-color:rgba(139,92,246,0.2)!important}\n'+_P+' .mp-lb,'+_P+' .mp-card-title{color:#c4b5fd!important}\n'+_P+' .mp-nt,'+_P+' .mp-cr{color:#8b7faa!important}\n'+_P+' .mp-pill-on{background:rgba(139,92,246,0.3)!important;color:#c084fc!important}\n'+_P+' .mp-pill-off{background:rgba(100,60,150,0.2)!important;color:#8b7faa!important}\n'+_P+' .mp-b2{background:rgba(60,40,90,0.5)!important;color:#c4b5fd!important;border-color:rgba(139,92,246,0.2)!important}\n'+_P+' .mp-count{color:#c084fc!important}\n'+_P+' .mp-logtime{color:#8b7faa!important}\n'+_P+' .mp-topbar label{color:#e2d9f3!important}\n'+_P+' .mp-t2{color:#8b7faa!important}'},
         {name:'🌿森林绿',css:'dialog[open]:has('+_P+'){background:rgba(236,253,245,0.78)!important;backdrop-filter:blur(22px)!important;border:1px solid rgba(52,211,153,0.3)!important;border-radius:20px!important}\n'+_P+' .mp-card{background:rgba(255,255,255,0.5)!important;border-color:rgba(52,211,153,0.3)!important}\n'+_P+' .mp-topbar{background:rgba(209,250,229,0.4)!important}\n'+_P+' .mp-b1,'+_P+' .mp-b-go{background:linear-gradient(135deg,#10b981,#34d399)!important}\n'+_P+' .mp-t1{background:linear-gradient(135deg,#059669,#10b981)!important;-webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important}\n'+_P+' .mp-tab.active{color:#059669!important;border-bottom-color:#059669!important}\n'+_P+' .mp-count{color:#059669!important}\n'+_P+' .mp-in,'+_P+' .mp-ta{color:#134e4a!important;background:rgba(255,255,255,0.7)!important}\n'+_P+' .mp-lb{color:#166534!important}\n'+_P+' .mp-card-title{color:#134e4a!important}\n'+_P+' .mp-nt{color:#15803d!important}\n'+_P+' .mp-topbar label{color:#134e4a!important}\n'+_P+' .mp-t2{color:#15803d!important}'},
-        {name:'🌸樱花粉',css:'dialog[open]:has('+_P+'){background:rgba(255,241,248,0.78)!important;backdrop-filter:blur(22px)!important;border:1px solid rgba(244,114,182,0.3)!important;border-radius:20px!important}\n'+_P+' .mp-card{background:rgba(255,255,255,0.5)!important;border-color:rgba(244,114,182,0.25)!important}\n'+_P+' .mp-topbar{background:rgba(252,231,243,0.4)!important}\n'+_P+' .mp-b1,'+_P+' .mp-b-go{background:linear-gradient(135deg,#ec4899,#f472b6)!important}\n'+_P+' .mp-t1{background:linear-gradient(135deg,#db2777,#ec4899)!important;-webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important}\n'+_P+' .mp-tab.active{color:#ec4899!important;border-bottom-color:#ec4899!important}\n'+_P+' .mp-count{color:#ec4899!important}\n'+_P+' .mp-in,'+_P+' .mp-ta{color:#831843!important;background:rgba(255,255,255,0.7)!important}\n'+_P+' .mp-lb{color:#9d174d!important}\n'+_P+' .mp-card-title{color:#831843!important}\n'+_P+' .mp-nt{color:#be185d!important}\n'+_P+' .mp-topbar label{color:#831843!important}\n'+_P+' .mp-t2{color:#be185d!important}'}];function _loadLogs(){try{var r=localStorage.getItem(LK);if(r)return JSON.parse(r);}catch(x){}return[];}
-    function _saveLogs(a){try{localStorage.setItem(LK,JSON.stringify(a.slice(-100)));}catch(x){}}
+        {name:'🌸樱花粉',css:'dialog[open]:has('+_P+'){background:rgba(255,241,248,0.78)!important;backdrop-filter:blur(22px)!important;border:1px solid rgba(244,114,182,0.3)!important;border-radius:20px!important}\n'+_P+' .mp-card{background:rgba(255,255,255,0.5)!important;border-color:rgba(244,114,182,0.25)!important}\n'+_P+' .mp-topbar{background:rgba(252,231,243,0.4)!important}\n'+_P+' .mp-b1,'+_P+' .mp-b-go{background:linear-gradient(135deg,#ec4899,#f472b6)!important}\n'+_P+' .mp-t1{background:linear-gradient(135deg,#db2777,#ec4899)!important;-webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important}\n'+_P+' .mp-tab.active{color:#ec4899!important;border-bottom-color:#ec4899!important}\n'+_P+' .mp-count{color:#ec4899!important}\n'+_P+' .mp-in,'+_P+' .mp-ta{color:#831843!important;background:rgba(255,255,255,0.7)!important}\n'+_P+' .mp-lb{color:#9d174d!important}\n'+_P+' .mp-card-title{color:#831843!important}\n'+_P+' .mp-nt{color:#be185d!important}\n'+_P+' .mp-topbar label{color:#831843!important}\n'+_P+' .mp-t2{color:#be185d!important}'}];function _loadLogs(){try{var r=localStorage.getItem(LK);if(r)return JSON.parse(r);}catch(x){}return[];}function _saveLogs(a){try{localStorage.setItem(LK,JSON.stringify(a.slice(-100)));}catch(x){}}
     function _addLog(fixes){var logs=_loadLogs(),now=new Date();var ts=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');logs.push({ts:ts,fl:fixes});_saveLogs(logs);}
     function _parseLW(text){var arr=[];text.split('\n').forEach(function(line){line=line.trim();if(!line)return;var parts=line.split('|');var w=parts[0].trim();var n=parts.length>1?parseInt(parts[1]):1;if(w&&!isNaN(n)&&n>=0)arr.push({w:w,n:n});});return arr;}
     function _lwToText(arr){return arr.map(function(x){return x.w+'|'+x.n;}).join('\n');}
@@ -64,41 +62,10 @@
     function _isChecked(idx,txt){return _loadChecked().indexOf(_msgKey(idx,txt))>=0;}
     function _markChecked(idx,txt){var list=_loadChecked();var key=_msgKey(idx,txt);if(list.indexOf(key)<0){list.push(key);_saveChecked(list);}}
     function _extractTags(txt){var tags=[];var re=/<([^\/>\s]+)[^>]*>[\s\S]*?<\/\1>/g;var m;while((m=re.exec(txt))!==null){tags.push({tag:m[1],full:m[0]});}return tags;}
-
     function _cmpVer(a,b){var pa=a.split('.').map(Number),pb=b.split('.').map(Number);for(var i=0;i<Math.max(pa.length,pb.length);i++){var na=pa[i]||0,nb=pb[i]||0;if(nb>na)return 1;if(na>nb)return-1;}return 0;}
-
-    function _silentCheck(){
-        fetch(_GH+'?t='+Date.now()).then(function(r){
-            if(!r.ok)return;return r.text();
-        }).then(function(code){
-            if(!code)return;
-            var m=code.match(/_ver='([^']+)'/);
-            if(!m)return;
-            var rv=m[1];
-            if(_cmpVer(_ver,rv)>0){
-                _hasUpdate=true;_remoteVer=rv;
-                _showDot();
-                console.log('[猫猫审校]发现新版本 v'+rv);
-            }else{
-                _hasUpdate=false;_remoteVer='';
-                _hideDot();
-            }
-        }).catch(function(){});
-    }
-
-    function _showDot(){
-        if(!_jq)return;
-        var doc;try{doc=(window.parent||window).document;}catch(x){doc=document;}
-        var dot=_jq('#'+_id+'-updot',doc);
-        if(dot.length)dot.show();
-    }
-
-    function _hideDot(){
-        if(!_jq)return;
-        var doc;try{doc=(window.parent||window).document;}catch(x){doc=document;}
-        var dot=_jq('#'+_id+'-updot',doc);
-        if(dot.length)dot.hide();
-    }
+    function _silentCheck(){fetch(_GH+'?t='+Date.now()).then(function(r){if(!r.ok)return;return r.text();}).then(function(code){if(!code)return;var m=code.match(/_ver='([^']+)'/);if(!m)return;var rv=m[1];if(_cmpVer(_ver,rv)>0){_hasUpdate=true;_remoteVer=rv;_showDot();console.log('[猫猫审校]发现新版本 v'+rv);}else{_hasUpdate=false;_remoteVer='';_hideDot();}}).catch(function(){});}
+    function _showDot(){if(!_jq)return;var doc;try{doc=(window.parent||window).document;}catch(x){doc=document;}var dot=_jq('#'+_id+'-updot',doc);if(dot.length)dot.show();}
+    function _hideDot(){if(!_jq)return;var doc;try{doc=(window.parent||window).document;}catch(x){doc=document;}var dot=_jq('#'+_id+'-updot',doc);if(dot.length)dot.hide();}
 
     function _validateResult(orig,result){
         var origLen=orig.replace(/\s+/g,'').length;
@@ -109,19 +76,9 @@
         if(ratio>2.0)return{ok:false,reason:'返回文本过长('+Math.round(ratio*100)+'%)，疑似续写'};
         var origParas=orig.split(/\n\s*\n/).filter(function(p){return p.trim();});
         var resParas=result.split(/\n\s*\n/).filter(function(p){return p.trim();});
-        if(origParas.length>=3&&resParas.length<origParas.length*0.5){
-            return{ok:false,reason:'段落数减少过多('+origParas.length+'→'+resParas.length+')，疑似删减内容'};
-        }
+        if(origParas.length>=3&&resParas.length<origParas.length*0.5){return{ok:false,reason:'段落数减少过多('+origParas.length+'→'+resParas.length+')，疑似删减内容'};}
         var origTags=_extractTags(orig);
-        for(var i=0;i<origTags.length;i++){
-            if(result.indexOf(origTags[i].full)<0){
-                var tagName=origTags[i].tag;
-                var reCheck=new RegExp('<'+tagName+'[^>]*>[\\s\\S]*?<\\/'+tagName+'>');
-                if(!reCheck.test(result)){
-                    console.warn('[猫猫审校]标签<'+tagName+'>在结果中未找到，但不拦截');
-                }
-            }
-        }
+        for(var i=0;i<origTags.length;i++){if(result.indexOf(origTags[i].full)<0){var tagName=origTags[i].tag;var reCheck=new RegExp('<'+tagName+'[^>]*>[\\s\\S]*?<\\/'+tagName+'>');if(!reCheck.test(result)){console.warn('[猫猫审校]标签<'+tagName+'>在结果中未找到，但不拦截');}}}
         return{ok:true};
     }
 
@@ -150,15 +107,11 @@
         var wl=C.wd.filter(function(x){return x.trim();});var ws=wl.length>0?wl.join('、'):'（无）';
         var ls='（无）';if(C.lw.length>0)ls=C.lw.map(function(x){return'「'+x.w+'」最多'+x.n+'次';}).join('、');
         var pl=C.pt.filter(function(x){return x.trim();});var ps=pl.length>0?pl.join('\n'):'（无）';
-        var extraParts=[];
-        if(C.rl&&C.rl.trim())extraParts.push(C.rl.trim());
-        if(overInfo)extraParts.push(overInfo);
+        var extraParts=[];if(C.rl&&C.rl.trim())extraParts.push(C.rl.trim());if(overInfo)extraParts.push(overInfo);
         var extra=extraParts.length>0?extraParts.join('\n\n'):'（无）';
         var work=C.sp||_defSP;
         work=work.replace(/\{\{WORDS\}\}/g,ws).replace(/\{\{LIMITS\}\}/g,ls).replace(/\{\{PATTERNS\}\}/g,ps).replace(/\{\{EXTRA\}\}/g,extra);
-        var identity=C.si||'';
-        if(identity.trim())return identity.trim()+'\n\n'+work;
-        return work;
+        var identity=C.si||'';if(identity.trim())return identity.trim()+'\n\n'+work;return work;
     }
 
     function _ep(){var u=C.url.trim();if(!u)throw new Error('无API地址');if(u.charAt(u.length-1)!=='/')u+='/';if(u.indexOf('googleapis.com')>=0){if(u.indexOf('chat/completions')<0)u+='chat/completions';}else{if(u.indexOf('/chat/completions')<0)u+=(u.indexOf('/v1/')>=0?'':'v1/')+'chat/completions';}return u;}
@@ -168,10 +121,7 @@
         if(!C.url||!C.mdl)throw new Error('API未配置');
         var h={'Content-Type':'application/json'};if(C.key)h['Authorization']='Bearer '+C.key;
         var sys=_sysP(overInfo);
-        var userMsg='以下是需要审校修改的原文（共'+txt.length+'字）。\n'
-+'请在原文基础上进行修改，替换禁词/限制词/禁用句式，并按照指令润色。\n'
-+'输出修改后的完整文本，不能续写也不能删减原文内容。\n\n'
-+'---原文开始---\n'+txt+'\n---原文结束---';
+        var userMsg='以下是需要审校修改的原文（共'+txt.length+'字）。\n请在原文基础上进行修改，替换禁词/限制词/禁用句式，并按照指令润色。\n输出修改后的完整文本，不能续写也不能删减原文内容。\n\n---原文开始---\n'+txt+'\n---原文结束---';
         var r=await fetch(_ep(),{method:'POST',headers:h,body:JSON.stringify({model:C.mdl,temperature:C.tp,stream:false,messages:[{role:'system',content:sys},{role:'user',content:userMsg}]})});
         if(!r.ok)throw new Error('API '+r.status);
         var j=await r.json();var c=j&&j.choices&&j.choices[0]&&j.choices[0].message?j.choices[0].message.content:null;
@@ -205,8 +155,7 @@
     }
 
     async function _doCheck(idx,force){
-        if(_busy)return;
-        if(!C.url||!C.mdl){_unveil(idx);return;}
+        if(_busy)return;if(!C.url||!C.mdl){_unveil(idx);return;}
         var hasRules=C.wd.some(function(x){return x.trim();})||C.lw.length>0||(C.rl&&C.rl.trim())||C.pt.some(function(x){return x.trim();});
         if(!hasRules){_unveil(idx);return;}
         var ctx=_ctx();if(!ctx||!ctx.chat||!ctx.chat[idx]){_msg('error','无法获取聊天数据');_unveil(idx);return;}
@@ -229,8 +178,7 @@
                 var brief=allFixes.slice(0,3).map(function(f){return'「'+f.s+'」';}).join('、');
                 if(allFixes.length>3)brief+='…等'+allFixes.length+'处';
                 _msg('success','✅ '+brief+(maxRounds>1?' ('+maxRounds+'轮)':''),{timeOut:4000});if(_popup)_refreshLog();
-            }else if(currentText!==orig){
-                await _applyResult(ctx,idx,msgData,currentText);_markChecked(idx,currentText);_msg('success','✅ 已修正',{timeOut:2000});
+            }else if(currentText!==orig){await _applyResult(ctx,idx,msgData,currentText);_markChecked(idx,currentText);_msg('success','✅ 已修正',{timeOut:2000});
             }else{_markChecked(idx,orig);if(force)_msg('success','✅ 无需修正',{timeOut:1500});}
         }catch(e){_msg('error','审校失败: '+e.message,{timeOut:5000});console.error('[猫猫审校]',e);}
         finally{_busy=false;_unveil(idx);}
@@ -239,7 +187,7 @@
     function _refreshLog(){if(!_popup)return;var logs=_loadLogs();var $box=_popup.find('#mp-logbox');if(!$box.length)return;if(!logs.length){$box.html('<div class="mp-nt" style="text-align:center;padding:20px">暂无记录</div>');return;}var h='';for(var i=logs.length-1;i>=0;i--){var log=logs[i];h+='<div class="mp-logitem"><div class="mp-logtime">'+_e(log.ts)+' · '+log.fl.length+'处</div>';log.fl.forEach(function(f){h+='<div class="mp-logfix"><span class="mp-logold">'+_e(f.s||'')+'</span><span class="mp-logarrow">→</span><span class="mp-lognew">'+_e(f.d||'')+'</span>';if(f.r)h+='<span class="mp-logreason">('+_e(f.r)+')</span>';h+='</div>';});h+='</div>';}$box.html(h);}
     function _refreshPTSel(){if(!_popup)return;var pd=_loadPT();var $s=_popup.find('#mp-ptsel');$s.empty().append('<option value="">— 选择预设 —</option>');pd.list.forEach(function(p){$s.append('<option value="'+_e(p.name)+'"'+(p.name===pd.active?' selected':'')+'>'+_e(p.name)+'</option>');});}
     function _refreshRLSel(){if(!_popup)return;var rd=_loadRL();var $s=_popup.find('#mp-rlsel');$s.empty().append('<option value="">— 选择预设 —</option>');rd.list.forEach(function(p){$s.append('<option value="'+_e(p.name)+'"'+(p.name===rd.active?' selected':'')+'>'+_e(p.name)+'</option>');});}
-        async function _openUI(){
+                async function _openUI(){
         if(!_ok){_msg('error','初始化未完成');return;}_l();
         var td=_loadTh();var allTh=_presets.concat(td.list);
         var thOpts='<option value="">— 选择—</option>';allTh.forEach(function(t){thOpts+='<option value="'+_e(t.name)+'"'+(t.name===td.active?' selected':'')+'>'+_e(t.name)+'</option>';});
@@ -251,10 +199,8 @@
         if(ctx&&ctx.callGenericPopup){popupFn=ctx.callGenericPopup;popupType=ctx.POPUP_TYPE||{DISPLAY:1};}
         else{var w=(typeof window.parent!=='undefined')?window.parent:window;var st=(typeof SillyTavern!=='undefined')?SillyTavern:(w.SillyTavern||null);if(st&&st.callGenericPopup){popupFn=st.callGenericPopup;popupType=st.POPUP_TYPE||{DISPLAY:1};}if(!popupFn&&w.callGenericPopup){popupFn=w.callGenericPopup;popupType=w.POPUP_TYPE||{DISPLAY:1};}}
         if(!popupFn){_msg('error','找不到弹窗API');return;}
-
         var updBtnStyle=_hasUpdate?'background:#ef4444;color:#fff;border-color:#ef4444;animation:mp-pulse 1.5s infinite':'';
         var updBtnText=_hasUpdate?'🔴 新版本 v'+_e(_remoteVer):'🔄检查更新';
-
         var S='<style>'
 +'#'+_id+'-popup{max-width:580px;margin:0 auto;font-family:system-ui,-apple-system,sans-serif;color:#1e293b}'
 +'#'+_id+'-popup *{box-sizing:border-box}'
@@ -310,7 +256,6 @@
 +'.mp-badge-def{background:#e0e7ff;color:#4338ca}'
 +'.mp-badge-cus{background:#fef3c7;color:#92400e}'
 +'</style>';
-
         var H='<div id="'+_id+'-popup">'+S
 +'<div class="mp-hdr"><div class="mp-t1">🔍 AI输出审校器</div><div class="mp-t2">禁词替换 · 限制用词 · 润色改写</div><div class="mp-cr">制作：是猫猫呦|仅发精神病院| v'+_ver+' <button class="mp-bt mp-b-upd" id="mp-upd" style="'+updBtnStyle+'">'+updBtnText+'</button></div></div>'
 +'<div class="mp-topbar"><div style="display:flex;align-items:center"><input type="checkbox" id="mp-on"'+(C.sw?' checked':'')+'><label for="mp-on">自动审校</label></div><span id="mp-pill" class="mp-pill '+(C.sw?'mp-pill-on':'mp-pill-off')+'">'+(C.sw?'●运行中':'○ 已关闭')+'</span></div>'
@@ -322,11 +267,11 @@
 +'<div class="mp-tab" data-tab="t5"><span class="mp-tab-icon">🎨</span>外观</div>'
 +'</div>'
 +'<div class="mp-page active" id="mp-t1">'
-+'<div class="mp-card"><div class="mp-card-title"><span>🚫</span>禁词</div><textarea class="mp-ta" id="mp-wta" rows="4" placeholder="每行一个禁词">'+_e(C.wd.join('\n'))+'</textarea><div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="mp-count" id="mp-wn">'+C.wd.filter(function(x){return x.trim();}).length+'个</span><button class="mp-bt mp-b1" id="mp-svw">保存</button></div></div>'
-+'<div class="mp-card"><div class="mp-card-title"><span>⚠️</span>限制用词</div><textarea class="mp-ta" id="mp-lwta" rows="4" placeholder="每行：词语|最多次数">'+_e(_lwToText(C.lw))+'</textarea><div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="mp-count" id="mp-lwn">'+C.lw.length+'条</span><button class="mp-bt mp-b1" id="mp-svlw">保存</button></div></div>'
-+'<div class="mp-card"><div class="mp-card-title"><span>🚧</span>禁用句式</div><textarea class="mp-ta" id="mp-pta" rows="3" placeholder="每行一个不想出现的句式\n例如：仿佛……一般\n不禁……起来">'+_e(C.pt.join('\n'))+'</textarea><div class="mp-nt">填写不想在文中出现的句式/句型，审校时会自动改写</div><div class="mp-btns"><button class="mp-bt mp-b1" id="mp-svp">保存</button></div></div>'
++'<div class="mp-card"><div class="mp-card-title"><span>🚫</span>禁词</div><textarea class="mp-ta" id="mp-wta" rows="4" placeholder="每行一个禁词，例如：\n不由自主\n忍不住\n情不自禁\n微微一笑\n缓缓说道">'+_e(C.wd.join('\n'))+'</textarea><div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="mp-count" id="mp-wn">'+C.wd.filter(function(x){return x.trim();}).length+'个</span><button class="mp-bt mp-b1" id="mp-svw">保存</button></div></div>'
++'<div class="mp-card"><div class="mp-card-title"><span>⚠️</span>限制用词</div><textarea class="mp-ta" id="mp-lwta" rows="4" placeholder="每行：词语|最多次数\n例如：\n轻轻|3\n缓缓|2\n微微|2">'+_e(_lwToText(C.lw))+'</textarea><div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="mp-count" id="mp-lwn">'+C.lw.length+'条</span><button class="mp-bt mp-b1" id="mp-svlw">保存</button></div></div>'
++'<div class="mp-card"><div class="mp-card-title"><span>🚧</span>禁用句式</div><textarea class="mp-ta" id="mp-pta" rows="3" placeholder="每行一个不想出现的句式，例如：\n仿佛……一般\n不禁……起来\n一抹XX的笑容\n嘴角微微上扬\nXX得令人心疼">'+_e(C.pt.join('\n'))+'</textarea><div class="mp-nt">填写不想在文中出现的句式/句型，审校时会自动改写为其他自然表达。支持用……代替可变内容</div><div class="mp-btns"><button class="mp-bt mp-b1" id="mp-svp">保存</button></div></div>'
 +'<div class="mp-card"><div class="mp-card-title"><span>📝</span>额外指令（★最高优先级）</div>'
-+'<div class="mp-preset-box"><div class="mp-preset-title">📦 额外指令预设</div>'
++'<div class="mp-preset-box"><div class="mp-preset-title">📦额外指令预设</div>'
 +'<div class="mp-gap"><div style="display:flex;gap:6px"><select class="mp-in" id="mp-rlsel" style="flex:1">'+rlOpts+'</select><button class="mp-bt mp-b1" id="mp-rlload">加载</button></div></div>'
 +'<div class="mp-gap"><div style="display:flex;gap:6px"><input class="mp-in" id="mp-rlname" placeholder="预设名称" style="flex:1"><button class="mp-bt mp-b1" id="mp-rlsave">💾</button><button class="mp-bt mp-b2" id="mp-rldel">🗑</button></div></div>'
 +'<div class="mp-pt-active" id="mp-rlinfo">'+(rd.active?'当前：'+_e(rd.active):'未使用预设')+'</div></div>'
@@ -361,11 +306,10 @@
 +'<div class="mp-gap"><span class="mp-lb">保存为</span><input class="mp-in" id="mp-thname" placeholder="主题名称"></div>'
 +'<div class="mp-btns"><button class="mp-bt mp-b2" id="mp-threset">↩ 还原</button><button class="mp-bt mp-b2" id="mp-thdel">🗑 删除</button><button class="mp-bt mp-b1" id="mp-thsave">💾 保存</button></div></div></div>'
 +'</div>';
-
         popupFn(H,popupType.DISPLAY,'猫猫审校器',{wide:true,large:true,allowVerticalScrolling:true,buttons:[],callback:function(){_popup=null;}});
         setTimeout(function(){var f=null;_jq('dialog[open]').each(function(){var x=_jq(this).find('#'+_id+'-popup');if(x.length){f=x;return false;}});if(!f)return;_popup=f;_bindUI();_refreshLog();},350);
-                                                                                                  }
-        function _bindUI(){
+            }
+                function _bindUI(){
         if(!_popup)return;var P=_popup,J=_jq;
         P.find('.mp-tab').on('click',function(){var tab=J(this).attr('data-tab');P.find('.mp-tab').removeClass('active');J(this).addClass('active');P.find('.mp-page').removeClass('active');P.find('#mp-'+tab).addClass('active');});
         P.find('#mp-on').on('change',function(){C.sw=this.checked;_s();P.find('#mp-pill').removeClass('mp-pill-on mp-pill-off').addClass(C.sw?'mp-pill-on':'mp-pill-off').html(C.sw?'● 运行中':'○ 已关闭');_msg('info',C.sw?'已启用':'已关闭');});
@@ -406,7 +350,7 @@
         if(!menu.length){if(_att<60){setTimeout(_addMenu,3000);}return;}
         if(_jq('#'+_id+'-mi',menu).length)return;
         var wrap=_jq('<div class="extension_container interactable" id="'+_id+'-mi" tabindex="0" style="position:relative"></div>');
-        var item=_jq('<div class="list-group-item flex-container flexGap5 interactable" title="猫猫审校器"><div class="fa-fw fa-solid fa-paw extensionsMenuExtensionButton"></div><span>猫猫审校器</span></div>');
+        var item=_jq('<div class="list-group-item flex-container flexGap5interactable" title="猫猫审校器"><div class="fa-fw fa-solid fa-paw extensionsMenuExtensionButton"></div><span>猫猫审校器</span></div>');
         var dot=_jq('<span id="'+_id+'-updot" style="display:none;width:9px;height:9px;background:#ef4444;border-radius:50%;position:absolute;top:4px;right:4px;box-shadow:0 0 4px rgba(239,68,68,0.6);animation:mp-dot-pulse 1.5s infinite"></span>');
         var dotStyle=_jq('<style>@keyframes mp-dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(0.8)}}</style>');
         item.on('click',async function(ev){
@@ -434,8 +378,7 @@
         if(!bound&&typeof eventOn==='function'){var tevt=(typeof tavern_events!=='undefined')?tavern_events:((typeof event_types!=='undefined')?event_types:null);if(tevt&&tevt.GENERATION_ENDED){eventOn(tevt.GENERATION_ENDED,function(){_autoTrigger();});bound=true;}}
         var lastLen=0;var ctx0=_ctx();if(ctx0&&ctx0.chat)lastLen=ctx0.chat.length;
         setInterval(function(){if(!C.sw||_busy)return;var ctx2=_ctx();if(!ctx2||!ctx2.chat)return;var n=ctx2.chat.length;if(n>lastLen&&n>0){var li=n-1;lastLen=n;var m=ctx2.chat[li];if(m&&!m.is_user&&!m.is_system){var txt=m.mes||'';if(_isChecked(li,txt))return;setTimeout(function(){if(_busy)return;var orig=m.mes||'';if(_isChecked(li,orig))return;var need=C.wd.some(function(ww){return ww.trim()&&orig.indexOf(ww.trim())>=0;})||_checkLimits(orig).length>0||(C.rl&&C.rl.trim())||C.pt.some(function(x){return x.trim();});if(need){_veil(li);_doCheck(li,false);}else{_markChecked(li,orig);}},bound?5000:2000);}}else lastLen=n;
-        },3000);
-    }
+        },3000);}
 
     function _checkReady(){var w=(typeof window.parent!=='undefined')?window.parent:window;_jq=(typeof jQuery!=='undefined')?jQuery:w.jQuery;if(!_jq&&typeof w.$!=='undefined')_jq=w.$;_tt=w.toastr||(typeof toastr!=='undefined'?toastr:null);var ctx=_ctx();_ok=!!(_jq&&ctx&&ctx.chat);return _ok;}
     var _att=0;
