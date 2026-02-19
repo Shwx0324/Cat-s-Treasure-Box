@@ -4,7 +4,7 @@
     var K={ap:_id+'_ap',wd:_id+'_wd',pt:_id+'_pt',rl:_id+'_rl',sw:_id+'_sw',rt:_id+'_rt',tp:_id+'_tp',sp:_id+'_sp',si:_id+'_si',lw:_id+'_lw',spC:_id+'_spCustom',siC:_id+'_siCustom'};
     var TK=_id+'_themes',LK=_id+'_logs',PK=_id+'_prompts',RK=_id+'_rlpresets',CK=_id+'_checked';
     var C={url:'',key:'',mdl:'',sw:false,rt:0,tp:0.3,wd:[],pt:[],rl:'',sp:'',si:'',lw:[]};
-    var _GH='https://raw.githubusercontent.com/Shwx0324/Cat-s-Treasure-Box/main/%E7%8C%AB%E7%8C%AB%E5%AE%A1%E6%A0%A1%E5%99%A8';
+    var _GH='https://raw.githubusercontent.com/Shwx0324/Cat-s-Treasure-Box/main/%E7%8C%AB%E7%8C%AB%E5%AE%A1%E6%A0%A1%E5%99%A8.js';
 
     var _defSI='你是一个专业的文本润色与审校工具。\n'
 +'你的工作是在用户提供的原文基础上进行修改润色：替换禁词、处理限制词和禁用句式，同时根据用户的额外指令对文本进行改写优化。\n'
