@@ -406,7 +406,7 @@
         if(!menu.length){if(_att<60){setTimeout(_addMenu,3000);}return;}
         if(_jq('#'+_id+'-mi',menu).length)return;
         var wrap=_jq('<div class="extension_container interactable" id="'+_id+'-mi" tabindex="0" style="position:relative"></div>');
-        var item=_jq('<div class="list-group-item flex-container flexGap5interactable" title="猫猫审校器"><div class="fa-fw fa-solid fa-paw extensionsMenuExtensionButton"></div><span>猫猫审校器</span></div>');
+        var item=_jq('<div class="list-group-item flex-container flexGap5 interactable" title="猫猫审校器"><div class="fa-fw fa-solid fa-paw extensionsMenuExtensionButton"></div><span>猫猫审校器</span></div>');
         var dot=_jq('<span id="'+_id+'-updot" style="display:none;width:9px;height:9px;background:#ef4444;border-radius:50%;position:absolute;top:4px;right:4px;box-shadow:0 0 4px rgba(239,68,68,0.6);animation:mp-dot-pulse 1.5s infinite"></span>');
         var dotStyle=_jq('<style>@keyframes mp-dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(0.8)}}</style>');
         item.on('click',async function(ev){
