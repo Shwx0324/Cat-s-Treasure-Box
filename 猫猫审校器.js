@@ -1,5 +1,4 @@
-(function(){'use strict';var _id='maoProof',_ver='2.8.8',_flag=_id+'_v'+_ver,_popup=null,_busy=false,_activeStyle=null,_jq=null,_tt=null,_ok=false,_hasUpdate=false,_remoteVer='';
-    var K={ap:_id+'_ap',wd:_id+'_wd',pt:_id+'_pt',rl:_id+'_rl',sw:_id+'_sw',rt:_id+'_rt',tp:_id+'_tp',sp:_id+'_sp',si:_id+'_si',lw:_id+'_lw',spC:_id+'_spCustom',siC:_id+'_siCustom'};
+(function(){'use strict';var _id='maoProof',_ver='2.8.8',_flag=_id+'_v'+_ver,_popup=null,_busy=false,_activeStyle=null,_jq=null,_tt=null,_ok=false,_hasUpdate=false,_remoteVer='';var K={ap:_id+'_ap',wd:_id+'_wd',pt:_id+'_pt',rl:_id+'_rl',sw:_id+'_sw',rt:_id+'_rt',tp:_id+'_tp',sp:_id+'_sp',si:_id+'_si',lw:_id+'_lw',spC:_id+'_spCustom',siC:_id+'_siCustom'};
     var TK=_id+'_themes',LK=_id+'_logs',PK=_id+'_prompts',RK=_id+'_rlpresets',CK=_id+'_checked';
     var C={url:'',key:'',mdl:'',sw:false,rt:0,tp:0.3,wd:[],pt:[],rl:'',sp:'',si:'',lw:[]};
     var _CDN='https://testingcf.jsdelivr.net/gh/Shwx0324/Cat-s-Treasure-Box@main/%E7%8C%AB%E7%8C%AB%E5%AE%A1%E6%A0%A1%E5%99%A8.js';
@@ -65,49 +64,22 @@
 
     function _silentCheck(){
         var urls=[_CDN,_RAW];
-        function tryFetch(i){
-            if(i>=urls.length)return;
-            fetch(urls[i]+'?t='+Date.now()).then(function(r){
-                if(!r.ok)throw new Error('HTTP '+r.status);return r.text();
-            }).then(function(code){
-                if(!code)return;
-                var m=code.match(/_ver='([^']+)'/);
-                if(!m)return;
-                var rv=m[1];
-                if(_cmpVer(_ver,rv)>0){
-                    console.log('[猫猫审校]发现新版本 v'+rv+'，尝试自动更新…');
-                    try{
-                        eval(code);_hasUpdate=false;_remoteVer='';_hideDot();
-                        _msg('success','✅ 已自动更新到v'+rv+'，请关闭面板重新打开',{timeOut:6000});console.log('[猫猫审校]自动更新成功 v'+rv);
-                    }catch(ex){
-                        console.warn('[猫猫审校]自动更新失败，可手动更新',ex);
-                        _hasUpdate=true;_remoteVer=rv;_showDot();
-                        _msg('warning','⚠️ 发现v'+rv+'，自动更新失败，请手动点击更新按钮',{timeOut:5000});
-                    }
-                }else{_hasUpdate=false;_remoteVer='';_hideDot();}
-            }).catch(function(){tryFetch(i+1);});
-        }
-        tryFetch(0);
+        function tryFetch(i){if(i>=urls.length)return;fetch(urls[i]+'?t='+Date.now()).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(function(code){if(!code)return;var m=code.match(/_ver='([^']+)'/);if(!m)return;var rv=m[1];if(_cmpVer(_ver,rv)>0){console.log('[猫猫审校]发现新版本 v'+rv+'，尝试自动更新…');try{eval(code);_hasUpdate=false;_remoteVer='';_hideDot();_msg('success','✅ 已自动更新到v'+rv+'，请关闭面板重新打开',{timeOut:6000});console.log('[猫猫审校]自动更新成功 v'+rv);}catch(ex){console.warn('[猫猫审校]自动更新失败',ex);_hasUpdate=true;_remoteVer=rv;_showDot();_msg('warning','⚠️ 发现v'+rv+'，自动更新失败，请手动更新',{timeOut:5000});}}else{_hasUpdate=false;_remoteVer='';_hideDot();}}).catch(function(){tryFetch(i+1);});}tryFetch(0);
     }
 
     function _fetchUpdate(){
         var urls=[_CDN,_RAW];
-        function tryFetch(i){
-            if(i>=urls.length){_msg('error','所有更新源均不可用',{timeOut:3000});return Promise.reject();}
-            return fetch(urls[i]+'?t='+Date.now()).then(function(r){
-                if(!r.ok)throw new Error('HTTP '+r.status);return r.text();
-            }).catch(function(){return tryFetch(i+1);});
-        }
+        function tryFetch(i){if(i>=urls.length){_msg('error','所有更新源均不可用',{timeOut:3000});return Promise.reject();}return fetch(urls[i]+'?t='+Date.now()).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).catch(function(){return tryFetch(i+1);});}
         return tryFetch(0);
     }
 
-    function _showDot(){if(!_jq)return;var doc;try{doc=(window.parent||window).document;}catch(x){doc=document;}var dot=_jq('#'+_id+'-updot',doc);if(dot.length)dot.show();}
-    function _hideDot(){if(!_jq)return;var doc;try{doc=(window.parent||window).document;}catch(x){doc=document;}var dot=_jq('#'+_id+'-updot',doc);if(dot.length)dot.hide();}
+    function _getPJQ(){var pw;try{pw=window.parent||window;}catch(x){pw=window;}return pw.jQuery||pw.$||_jq;}
+    function _showDot(){var pJQ=_getPJQ();if(!pJQ)return;var dot=pJQ('#'+_id+'-updot');if(dot.length)dot.show();}
+    function _hideDot(){var pJQ=_getPJQ();if(!pJQ)return;var dot=pJQ('#'+_id+'-updot');if(dot.length)dot.hide();}
 
     function _validateResult(orig,result){
         var origLen=orig.replace(/\s+/g,'').length;var resLen=result.replace(/\s+/g,'').length;
-        if(origLen===0)return{ok:true};
-        var ratio=resLen/origLen;
+        if(origLen===0)return{ok:true};var ratio=resLen/origLen;
         if(ratio<0.3)return{ok:false,reason:'返回文本过短('+Math.round(ratio*100)+'%)，疑似删除原文'};
         if(ratio>2.0)return{ok:false,reason:'返回文本过长('+Math.round(ratio*100)+'%)，疑似续写'};
         var origParas=orig.split(/\n\s*\n/).filter(function(p){return p.trim();});
@@ -118,38 +90,27 @@
         return{ok:true};
     }
 
-    function _l(){try{var a=JSON.parse(localStorage.getItem(K.ap)||'{}');if(a.u)C.url=a.u;if(a.k)C.key=a.k;if(a.m)C.mdl=a.m;var w=JSON.parse(localStorage.getItem(K.wd)||'null');if(Array.isArray(w))C.wd=w;var p=JSON.parse(localStorage.getItem(K.pt)||'null');if(Array.isArray(p))C.pt=p;var r=localStorage.getItem(K.rl);if(r!==null)C.rl=r;var s=localStorage.getItem(K.sw);if(s!==null)C.sw=s==='true';var t=localStorage.getItem(K.rt);if(t!==null)C.rt=parseInt(t)||0;var e=localStorage.getItem(K.tp);if(e!==null)C.tp=parseFloat(e)||0.3;if(localStorage.getItem(K.spC)==='true'){var sp=localStorage.getItem(K.sp);C.sp=(sp&&sp.trim())?sp:_defSP;}else{C.sp=_defSP;}if(localStorage.getItem(K.siC)==='true'){var si=localStorage.getItem(K.si);C.si=(si&&si.trim())?si:_defSI;}else{C.si=_defSI;}var lw=localStorage.getItem(K.lw);if(lw){try{C.lw=JSON.parse(lw);}catch(x){C.lw=[];}}}catch(x){C.sp=_defSP;C.si=_defSI;}}
-
-    function _s(){try{localStorage.setItem(K.ap,JSON.stringify({u:C.url,k:C.key,m:C.mdl}));localStorage.setItem(K.wd,JSON.stringify(C.wd));localStorage.setItem(K.pt,JSON.stringify(C.pt));localStorage.setItem(K.rl,C.rl);localStorage.setItem(K.sw,String(C.sw));localStorage.setItem(K.rt,String(C.rt));localStorage.setItem(K.tp,String(C.tp));localStorage.setItem(K.sp,C.sp);localStorage.setItem(K.si,C.si);localStorage.setItem(K.lw,JSON.stringify(C.lw));}catch(x){}}
-
+    function _l(){try{var a=JSON.parse(localStorage.getItem(K.ap)||'{}');if(a.u)C.url=a.u;if(a.k)C.key=a.k;if(a.m)C.mdl=a.m;var w=JSON.parse(localStorage.getItem(K.wd)||'null');if(Array.isArray(w))C.wd=w;var p=JSON.parse(localStorage.getItem(K.pt)||'null');if(Array.isArray(p))C.pt=p;var r=localStorage.getItem(K.rl);if(r!==null)C.rl=r;var s=localStorage.getItem(K.sw);if(s!==null)C.sw=s==='true';var t=localStorage.getItem(K.rt);if(t!==null)C.rt=parseInt(t)||0;var e=localStorage.getItem(K.tp);if(e!==null)C.tp=parseFloat(e)||0.3;if(localStorage.getItem(K.spC)==='true'){var sp=localStorage.getItem(K.sp);C.sp=(sp&&sp.trim())?sp:_defSP;}else{C.sp=_defSP;}if(localStorage.getItem(K.siC)==='true'){var si=localStorage.getItem(K.si);C.si=(si&&si.trim())?si:_defSI;}else{C.si=_defSI;}var lw=localStorage.getItem(K.lw);if(lw){try{C.lw=JSON.parse(lw);}catch(x){C.lw=[];}}}catch(x){C.sp=_defSP;C.si=_defSI;}}function _s(){try{localStorage.setItem(K.ap,JSON.stringify({u:C.url,k:C.key,m:C.mdl}));localStorage.setItem(K.wd,JSON.stringify(C.wd));localStorage.setItem(K.pt,JSON.stringify(C.pt));localStorage.setItem(K.rl,C.rl);localStorage.setItem(K.sw,String(C.sw));localStorage.setItem(K.rt,String(C.rt));localStorage.setItem(K.tp,String(C.tp));localStorage.setItem(K.sp,C.sp);localStorage.setItem(K.si,C.si);localStorage.setItem(K.lw,JSON.stringify(C.lw));}catch(x){}}
     function _loadTh(){try{var r=localStorage.getItem(TK);if(r)return JSON.parse(r);}catch(x){}return{list:[],active:''};}
     function _saveTh(d){try{localStorage.setItem(TK,JSON.stringify(d));}catch(x){}}
     function _applyCSS(css){if(_activeStyle&&_activeStyle.parentNode){_activeStyle.parentNode.removeChild(_activeStyle);_activeStyle=null;}if(!css||!css.trim())return;var doc=(window.parent||window).document;var el=doc.createElement('style');el.setAttribute('data-mao-theme','1');el.textContent=css;doc.head.appendChild(el);_activeStyle=el;}
     function _initTheme(){var td=_loadTh();if(td.active){var all=_presets.concat(td.list);var f=all.find(function(t){return t.name===td.active;});if(f)_applyCSS(f.css);}}
     function _ctx(){var w=(typeof window.parent!=='undefined')?window.parent:window;var st=(typeof SillyTavern!=='undefined')?SillyTavern:(w.SillyTavern||null);if(st&&typeof st.getContext==='function')return st.getContext();if(st&&st.context)return st.context;return null;}
-
     function _sysP(overInfo){var wl=C.wd.filter(function(x){return x.trim();});var ws=wl.length>0?wl.join('、'):'（无）';var ls='（无）';if(C.lw.length>0)ls=C.lw.map(function(x){return'「'+x.w+'」最多'+x.n+'次';}).join('、');var pl=C.pt.filter(function(x){return x.trim();});var ps=pl.length>0?pl.join('\n'):'（无）';var extraParts=[];if(C.rl&&C.rl.trim())extraParts.push(C.rl.trim());if(overInfo)extraParts.push(overInfo);var extra=extraParts.length>0?extraParts.join('\n\n'):'（无）';var work=C.sp||_defSP;work=work.replace(/\{\{WORDS\}\}/g,ws).replace(/\{\{LIMITS\}\}/g,ls).replace(/\{\{PATTERNS\}\}/g,ps).replace(/\{\{EXTRA\}\}/g,extra);var identity=C.si||'';if(identity.trim())return identity.trim()+'\n\n'+work;return work;}
-
     function _ep(){var u=C.url.trim();if(!u)throw new Error('无API地址');if(u.charAt(u.length-1)!=='/')u+='/';if(u.indexOf('googleapis.com')>=0){if(u.indexOf('chat/completions')<0)u+='chat/completions';}else{if(u.indexOf('/chat/completions')<0)u+=(u.indexOf('/v1/')>=0?'':'v1/')+'chat/completions';}return u;}
     function _clean(raw){var s=raw.trim();var m=s.match(/^```[\s\S]*?\n([\s\S]*?)\n```$/);if(m)s=m[1];s=s.replace(/^---[^\n]*---\n?/,'').replace(/\n?---[^\n]*---$/,'');if((s.charAt(0)==='"'&&s.charAt(s.length-1)==='"')||(s.charAt(0)==="'"&&s.charAt(s.length-1)==="'"))s=s.substring(1,s.length-1);s=s.replace(/^\n+/,'').replace(/\n+$/,'');return s;}
-
     async function _call(txt,overInfo){if(!C.url||!C.mdl)throw new Error('API未配置');var h={'Content-Type':'application/json'};if(C.key)h['Authorization']='Bearer '+C.key;var sys=_sysP(overInfo);var userMsg='以下是需要审校修改的原文（共'+txt.length+'字）。\n请在原文基础上进行修改，替换禁词/限制词/禁用句式，并按照指令润色。\n输出修改后的完整文本，不能续写也不能删减原文内容。\n\n---原文开始---\n'+txt+'\n---原文结束---';var r=await fetch(_ep(),{method:'POST',headers:h,body:JSON.stringify({model:C.mdl,temperature:C.tp,stream:false,messages:[{role:'system',content:sys},{role:'user',content:userMsg}]})});if(!r.ok)throw new Error('API '+r.status);var j=await r.json();var c=j&&j.choices&&j.choices[0]&&j.choices[0].message?j.choices[0].message.content:null;if(!c||!c.trim())throw new Error('API返回空');var cleaned=_clean(c);var v=_validateResult(txt,cleaned);if(!v.ok){console.warn('[猫猫审校]拦截: '+v.reason);return{changed:false,text:'',fixes:[],rejected:true,reason:v.reason};}if(cleaned.replace(/\s+/g,'')===txt.replace(/\s+/g,''))return{changed:false,text:'',fixes:[]};var fixes=[];C.wd.forEach(function(w){w=w.trim();if(!w)return;if(txt.indexOf(w)>=0&&cleaned.indexOf(w)<0)fixes.push({s:w,d:'(已替换)',r:'禁词'});});C.lw.forEach(function(item){var before=_countWord(txt,item.w);var after=_countWord(cleaned,item.w);if(before>item.n&&after<before)fixes.push({s:item.w+'('+before+'→'+after+')',d:'限'+item.n+'次',r:'限制词'});});if(fixes.length===0&&cleaned!==txt)fixes.push({s:'(润色改写)',d:'按指令修改',r:'改写'});return{changed:true,text:cleaned,fixes:fixes};}
-
     async function _models(){var u=C.url.trim();if(!u)throw new Error('填写API地址');if(u.charAt(u.length-1)!=='/')u+='/';if(u.indexOf('googleapis.com')>=0){if(u.indexOf('models')<0)u+='models';}else{if(u.indexOf('models')<0)u+=(u.indexOf('/v1/')>=0?'':'v1/')+'models';}var h={'Content-Type':'application/json'};if(C.key)h['Authorization']='Bearer '+C.key;var r=await fetch(u,{method:'GET',headers:h});if(!r.ok)throw new Error(''+r.status);var d=await r.json();if(d&&d.data&&Array.isArray(d.data))return d.data.map(function(m){return m.id;}).filter(Boolean);if(Array.isArray(d))return d.map(function(m){return typeof m==='string'?m:m.id;}).filter(Boolean);return[];}
-
     function _findLastAI(){var ctx=_ctx();if(!ctx||!ctx.chat||!ctx.chat.length)return-1;for(var i=ctx.chat.length-1;i>=0;i--){var m=ctx.chat[i];if(m&&!m.is_user&&!m.is_system)return i;}return-1;}
     function _unveil(idx){if(!_jq)return;var $m=_jq('.mes[mesid="'+idx+'"]');if(!$m.length)return;$m.find('.mes_text').css({'filter':'none','pointer-events':'','user-select':''});$m.find('.mp-checking').remove();}
     function _veil(idx){if(!_jq)return;var $m=_jq('.mes[mesid="'+idx+'"]');if(!$m.length)return;var $t=$m.find('.mes_text');$t.css({'filter':'blur(8px)','pointer-events':'none','user-select':'none','transition':'filter .3s'});if(!$m.find('.mp-checking').length)$t.parent().append('<div class="mp-checking" style="text-align:center;padding:8px;font-size:0.85rem;color:#7c3aed;font-weight:600">🔍审校中…</div>');}
-
     async function _applyResult(ctx,idx,msgData,newText){ctx.chat[idx].mes=newText;var saved=false;try{if(ctx.saveChatConditional){await ctx.saveChatConditional();saved=true;}}catch(x){console.log('[猫猫审校]saveChatConditional失败',x);}if(!saved){try{if(ctx.saveChat){await ctx.saveChat();saved=true;}}catch(x){console.log('[猫猫审校]saveChat失败',x);}}if(!saved){try{if(ctx.executeSlashCommands){await ctx.executeSlashCommands('/savechat');saved=true;}}catch(x){}}var reloaded=false;var pw=(window.parent||window);try{if(pw.reloadCurrentChat){await pw.reloadCurrentChat();reloaded=true;}}catch(x){console.log('[猫猫审校]reloadChat(pw)失败',x);}if(!reloaded){try{if(ctx.reloadCurrentChat){await ctx.reloadCurrentChat();reloaded=true;}}catch(x){console.log('[猫猫审校]reloadChat(ctx)失败',x);}}if(!reloaded){var $txt=_jq('.mes[mesid="'+idx+'"] .mes_text');if($txt.length){var fmtDone=false;try{if(ctx.messageFormatting){$txt.html(ctx.messageFormatting(newText,msgData.name,false,false,idx));fmtDone=true;}}catch(x){}if(!fmtDone){try{if(pw.messageFormatting){$txt.html(pw.messageFormatting(newText,msgData.name,false,false,idx));fmtDone=true;}}catch(x){}}if(!fmtDone)$txt.html(newText.replace(/\n/g,'<br>'));}}}
-
     async function _doCheck(idx,force){if(_busy)return;if(!C.url||!C.mdl){_unveil(idx);return;}var hasRules=C.wd.some(function(x){return x.trim();})||C.lw.length>0||(C.rl&&C.rl.trim())||C.pt.some(function(x){return x.trim();});if(!hasRules){_unveil(idx);return;}var ctx=_ctx();if(!ctx||!ctx.chat||!ctx.chat[idx]){_msg('error','无法获取聊天数据');_unveil(idx);return;}var msgData=ctx.chat[idx];var orig=msgData.mes||msgData.message||'';if(msgData.is_user||msgData.is_system||!orig||orig.trim().length<2){_unveil(idx);return;}if(!force&&_isChecked(idx,orig)){_unveil(idx);return;}_busy=true;var currentText=orig;var allFixes=[];var maxRounds=1+(C.rt||0);try{for(var round=0;round<maxRounds;round++){var ol=_checkLimits(currentText);var overInfo='';if(ol.length>0){overInfo='以下限制用词超标：\n';ol.forEach(function(o){overInfo+='「'+o.w+'」限'+o.max+'次，实际'+o.actual+'次，需减少'+o.excess+'处\n';});}var hw=C.wd.some(function(w){return w.trim()&&currentText.indexOf(w.trim())>=0;});if(!hw&&ol.length===0&&round>0)break;var res=await _call(currentText,overInfo||null);if(res.rejected){_msg('warning','⚠️ '+res.reason+'，原文保持不变',{timeOut:4000});break;}if(res.changed&&res.text){currentText=res.text;allFixes=allFixes.concat(res.fixes);}else break;}if(currentText!==orig&&allFixes.length>0){_addLog(allFixes);await _applyResult(ctx,idx,msgData,currentText);_markChecked(idx,currentText);var brief=allFixes.slice(0,3).map(function(f){return'「'+f.s+'」';}).join('、');if(allFixes.length>3)brief+='…等'+allFixes.length+'处';_msg('success','✅ '+brief+(maxRounds>1?' ('+maxRounds+'轮)':''),{timeOut:4000});if(_popup)_refreshLog();}else if(currentText!==orig){await _applyResult(ctx,idx,msgData,currentText);_markChecked(idx,currentText);_msg('success','✅ 已修正',{timeOut:2000});}else{_markChecked(idx,orig);if(force)_msg('success','✅ 无需修正',{timeOut:1500});}}catch(e){_msg('error','审校失败: '+e.message,{timeOut:5000});console.error('[猫猫审校]',e);}finally{_busy=false;_unveil(idx);}}
-
     function _refreshLog(){if(!_popup)return;var logs=_loadLogs();var $box=_popup.find('#mp-logbox');if(!$box.length)return;if(!logs.length){$box.html('<div class="mp-nt" style="text-align:center;padding:20px">暂无记录</div>');return;}var h='';for(var i=logs.length-1;i>=0;i--){var log=logs[i];h+='<div class="mp-logitem"><div class="mp-logtime">'+_e(log.ts)+' · '+log.fl.length+'处</div>';log.fl.forEach(function(f){h+='<div class="mp-logfix"><span class="mp-logold">'+_e(f.s||'')+'</span><span class="mp-logarrow">→</span><span class="mp-lognew">'+_e(f.d||'')+'</span>';if(f.r)h+='<span class="mp-logreason">('+_e(f.r)+')</span>';h+='</div>';});h+='</div>';}$box.html(h);}
     function _refreshPTSel(){if(!_popup)return;var pd=_loadPT();var $s=_popup.find('#mp-ptsel');$s.empty().append('<option value="">— 选择预设 —</option>');pd.list.forEach(function(p){$s.append('<option value="'+_e(p.name)+'"'+(p.name===pd.active?' selected':'')+'>'+_e(p.name)+'</option>');});}
     function _refreshRLSel(){if(!_popup)return;var rd=_loadRL();var $s=_popup.find('#mp-rlsel');$s.empty().append('<option value="">— 选择预设 —</option>');rd.list.forEach(function(p){$s.append('<option value="'+_e(p.name)+'"'+(p.name===rd.active?' selected':'')+'>'+_e(p.name)+'</option>');});}
                 async function _openUI(){
-        if(!_ok){_msg('error','初始化未完成');return;}_l();
+        if(!_ok){var ctx0=_ctx();if(ctx0&&ctx0.chat){_ok=true;}else{_msg('error','请先打开一个聊天');return;}}_l();
         var td=_loadTh();var allTh=_presets.concat(td.list);var thOpts='<option value="">— 选择—</option>';allTh.forEach(function(t){thOpts+='<option value="'+_e(t.name)+'"'+(t.name===td.active?' selected':'')+'>'+_e(t.name)+'</option>';});var curCSS='';if(td.active){var ff=allTh.find(function(t){return t.name===td.active;});if(ff)curCSS=ff.css;}
         var pd=_loadPT();var ptOpts='<option value="">— 选择预设 —</option>';pd.list.forEach(function(p){ptOpts+='<option value="'+_e(p.name)+'"'+(p.name===pd.active?' selected':'')+'>'+_e(p.name)+'</option>';});
         var rd=_loadRL();var rlOpts='<option value="">— 选择预设 —</option>';rd.list.forEach(function(p){rlOpts+='<option value="'+_e(p.name)+'"'+(p.name===rd.active?' selected':'')+'>'+_e(p.name)+'</option>';});
@@ -228,21 +189,40 @@
         P.find('#mp-threset').on('click',function(){var td=_loadTh();td.active='';_saveTh(td);_applyCSS('');P.find('#mp-thcss').val('');P.find('#mp-thsel').val('');P.find('#mp-thname').val('');_msg('info','已还原');});
     }
 
+    var _menuAtt=0,_menuDone=false;
     function _addMenu(){
-        if(!_jq)return;var doc;
-        try{doc=(window.parent||window).document;}catch(x){doc=document;}
-        var menu=_jq('#extensionsMenu',doc);
-        if(!menu.length){try{menu=_jq('#extensionsMenu',document);}catch(x){}}
-        if(!menu.length){try{if(window.parent&&window.parent.document){menu=_jq('#extensionsMenu',window.parent.document);}}catch(x){}}
-        if(!menu.length){if(_att<60){setTimeout(_addMenu,3000);}return;}
-        if(_jq('#'+_id+'-mi',menu).length)return;
-        var wrap=_jq('<div class="extension_container interactable" id="'+_id+'-mi" tabindex="0" style="position:relative"></div>');
-        var item=_jq('<div class="list-group-item flex-container flexGap5 interactable" title="猫猫审校器"><div class="fa-fw fa-solid fa-paw extensionsMenuExtensionButton"></div><span>猫猫审校器</span></div>');
-        var dot=_jq('<span id="'+_id+'-updot" style="display:none;width:9px;height:9px;background:#ef4444;border-radius:50%;position:absolute;top:4px;right:4px;box-shadow:0 0 4px rgba(239,68,68,0.6);animation:mp-dot-pulse 1.5s infinite"></span>');
-        var dotStyle=_jq('<style>@keyframes mp-dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(0.8)}}</style>');
-        item.on('click',async function(ev){ev.stopPropagation();var btn=_jq('#extensionsMenuButton',doc);if(btn.length&&menu.is(':visible')){btn.trigger('click');await new Promise(function(r){setTimeout(r,120);});}await _openUI();});
-        wrap.append(item).append(dot);menu.append(wrap);_jq('head',doc).append(dotStyle);
-        if(_hasUpdate)dot.show();
+        if(_menuDone)return;
+        _menuAtt++;
+        var pw;try{pw=window.parent||window;}catch(x){pw=window;}
+        var pJQ=pw.jQuery||pw.$||_jq;
+        if(!pJQ){if(_menuAtt<60){setTimeout(_addMenu,3000);}return;}
+
+        var menu=pJQ('#extensionsMenu');
+        if(menu.length&&!pJQ('#'+_id+'-mi').length){
+            var wrap=pJQ('<div class="extension_container interactable" id="'+_id+'-mi" tabindex="0" style="position:relative"></div>');
+            var item=pJQ('<div class="list-group-item flex-container flexGap5interactable" title="猫猫审校器"><div class="fa-fw fa-solid fa-paw extensionsMenuExtensionButton"></div><span>猫猫审校器</span></div>');
+            var dot=pJQ('<span id="'+_id+'-updot" style="display:none;width:9px;height:9px;background:#ef4444;border-radius:50%;position:absolute;top:4px;right:4px;box-shadow:0 0 4px rgba(239,68,68,0.6);animation:mp-dot-pulse 1.5s infinite"></span>');
+            if(!pJQ('#mp-dot-style').length){pJQ('<style id="mp-dot-style">@keyframes mp-dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(0.8)}}</style>').appendTo(pJQ('head'));}
+            item.on('click',async function(ev){ev.stopPropagation();var btn=pJQ('#extensionsMenuButton');if(btn.length&&menu.is(':visible')){btn.trigger('click');await new Promise(function(r){setTimeout(r,120);});}await _openUI();});
+            wrap.append(item).append(dot);menu.append(wrap);
+            if(_hasUpdate)dot.show();
+            _menuDone=true;console.log('[猫猫审校]菜单已挂载(扩展菜单)');return;
+        }
+
+        if(_menuAtt>=10&&!pJQ('#'+_id+'-float').length){
+            if(!pJQ('#mp-dot-style').length){pJQ('<style id="mp-dot-style">@keyframes mp-dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(0.8)}}</style>').appendTo(pJQ('head'));}
+            var fb=pJQ('<div id="'+_id+'-float" style="position:fixed;bottom:80px;right:16px;z-index:99999;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;box-shadow:0 4px 15px rgba(124,58,237,0.4);transition:transform .2s;user-select:none" title="猫猫审校器">🐾</div>');
+            var fdot=pJQ('<span id="'+_id+'-updot" style="display:none;width:9px;height:9px;background:#ef4444;border-radius:50%;position:absolute;top:0;right:0;box-shadow:0 0 4px rgba(239,68,68,0.6);animation:mp-dot-pulse 1.5s infinite"></span>');
+            fb.append(fdot);
+            fb.on('click',async function(){await _openUI();});
+            fb.on('mouseenter',function(){pJQ(this).css('transform','scale(1.1)');});
+            fb.on('mouseleave',function(){pJQ(this).css('transform','scale(1)');});
+            pJQ('body').append(fb);
+            if(_hasUpdate)fdot.show();
+            _menuDone=true;console.log('[猫猫审校]菜单已挂载(浮动按钮)');return;
+        }
+
+        if(_menuAtt<60){setTimeout(_addMenu,3000);}
     }
 
     function _listen(){var ctx=_ctx();var w=(typeof window.parent!=='undefined')?window.parent:window;var evSrc=null,evTypes=null;if(ctx){evSrc=ctx.eventSource||null;evTypes=ctx.event_types||ctx.eventTypes||null;}if(!evSrc)evSrc=w.eventSource||(typeof eventSource!=='undefined'?eventSource:null);if(!evTypes)evTypes=w.event_types||w.eventTypes||(typeof event_types!=='undefined'?event_types:null)||(typeof tavern_events!=='undefined'?tavern_events:null);var bound=false;
@@ -253,14 +233,16 @@
         var lastLen=0;var ctx0=_ctx();if(ctx0&&ctx0.chat)lastLen=ctx0.chat.length;
         setInterval(function(){if(!C.sw||_busy)return;var ctx2=_ctx();if(!ctx2||!ctx2.chat)return;var n=ctx2.chat.length;if(n>lastLen&&n>0){var li=n-1;lastLen=n;var m=ctx2.chat[li];if(m&&!m.is_user&&!m.is_system){var txt=m.mes||'';if(_isChecked(li,txt))return;setTimeout(function(){if(_busy)return;var orig=m.mes||'';if(_isChecked(li,orig))return;var need=C.wd.some(function(ww){return ww.trim()&&orig.indexOf(ww.trim())>=0;})||_checkLimits(orig).length>0||(C.rl&&C.rl.trim())||C.pt.some(function(x){return x.trim();});if(need){_veil(li);_doCheck(li,false);}else{_markChecked(li,orig);}},bound?5000:2000);}}else lastLen=n;},3000);}
 
-    function _checkReady(){var w=(typeof window.parent!=='undefined')?window.parent:window;_jq=(typeof jQuery!=='undefined')?jQuery:w.jQuery;if(!_jq&&typeof w.$!=='undefined')_jq=w.$;_tt=w.toastr||(typeof toastr!=='undefined'?toastr:null);var ctx=_ctx();_ok=!!(_jq&&ctx&&ctx.chat);return _ok;}
+    function _checkReady(){var w=(typeof window.parent!=='undefined')?window.parent:window;_jq=(typeof jQuery!=='undefined')?jQuery:w.jQuery;if(!_jq&&typeof w.$!=='undefined')_jq=w.$;_tt=w.toastr||(typeof toastr!=='undefined'?toastr:null);return!!_jq;}
+    function _checkFull(){var ctx=_ctx();_ok=!!(ctx&&ctx.chat);return _ok;}
     var _att=0;
-    function _init(){_att++;if(_checkReady()){_l();_addMenu();_listen();_initTheme();console.log('[猫猫审校]v'+_ver+'初始化完成');setTimeout(_silentCheck,5000);}else if(_att<30){setTimeout(_init,2000);}else{console.warn('[猫猫审校]初始化超时');}}
+    function _init(){_att++;if(_checkReady()){_l();_addMenu();_initTheme();if(_checkFull()){_listen();console.log('[猫猫审校]v'+_ver+'完整初始化');}else{console.log('[猫猫审校]v'+_ver+'菜单已加载，等待聊天就绪…');var _waitChat=setInterval(function(){if(_checkFull()){clearInterval(_waitChat);_listen();console.log('[猫猫审校]聊天就绪，监听已启动');}},3000);}setTimeout(_silentCheck,5000);}else if(_att<30){setTimeout(_init,2000);}else{console.warn('[猫猫审校]初始化超时');}}
 
     function _cleanOld(){try{window[_id+'_init']=undefined;}catch(x){}var prefix=_id+'_v';try{var keys=Object.keys(window);for(var i=0;i<keys.length;i++){var k=keys[i];if(k.indexOf(prefix)===0&&k!==_flag){try{window[k]=undefined;}catch(x){}}}}catch(x){}if(typeof window[_id+'_cleanup']==='function'){try{window[_id+'_cleanup']();}catch(x){}}}
 
     if(!window[_flag]){
         _cleanOld();window[_flag]=true;
         var iv=setInterval(function(){var w=(typeof window.parent!=='undefined')?window.parent:window;if(typeof jQuery!=='undefined'||typeof $!=='undefined'||w.jQuery){clearInterval(iv);_jq=(typeof jQuery!=='undefined')?jQuery:(w.jQuery||w.$);if(document.readyState==='complete'||document.readyState==='interactive'){setTimeout(_init,3000);}else{document.addEventListener('DOMContentLoaded',function(){setTimeout(_init,3000);});}}},200);
-        window[_id+'_cleanup']=function(){try{var doc=(window.parent||window).document;var el=doc.querySelector('#'+_id+'-mi');if(el)el.remove();}catch(x){}_ok=false;C.sw=false;};}
+        window[_id+'_cleanup']=function(){try{var pw=(window.parent||window);var doc=pw.document;var el=doc.querySelector('#'+_id+'-mi');if(el)el.remove();var fl=doc.querySelector('#'+_id+'-float');if(fl)fl.remove();}catch(x){}_ok=false;C.sw=false;};
+    }
 })();
