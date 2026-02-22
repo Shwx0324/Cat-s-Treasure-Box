@@ -1,5 +1,4 @@
-(function(){'use strict';var _id='maoProof',_ver='2.8.8',_flag=_id+'_v'+_ver,_popup=null,_busy=false,_activeStyle=null,_jq=null,_tt=null,_ok=false,_hasUpdate=false,_remoteVer='';var K={ap:_id+'_ap',wd:_id+'_wd',pt:_id+'_pt',rl:_id+'_rl',sw:_id+'_sw',rt:_id+'_rt',tp:_id+'_tp',sp:_id+'_sp',si:_id+'_si',lw:_id+'_lw',spC:_id+'_spCustom',siC:_id+'_siCustom'};
-    var TK=_id+'_themes',LK=_id+'_logs',PK=_id+'_prompts',RK=_id+'_rlpresets',CK=_id+'_checked';
+(function(){'use strict';var _id='maoProof',_ver='2.8.9',_flag=_id+'_v'+_ver,_popup=null,_busy=false,_activeStyle=null,_jq=null,_tt=null,_ok=false,_hasUpdate=false,_remoteVer='';var K={ap:_id+'_ap',wd:_id+'_wd',pt:_id+'_pt',rl:_id+'_rl',sw:_id+'_sw',rt:_id+'_rt',tp:_id+'_tp',sp:_id+'_sp',si:_id+'_si',lw:_id+'_lw',spC:_id+'_spCustom',siC:_id+'_siCustom'};var TK=_id+'_themes',LK=_id+'_logs',PK=_id+'_prompts',RK=_id+'_rlpresets',CK=_id+'_checked';
     var C={url:'',key:'',mdl:'',sw:false,rt:0,tp:0.3,wd:[],pt:[],rl:'',sp:'',si:'',lw:[]};
     var _CDN='https://testingcf.jsdelivr.net/gh/Shwx0324/Cat-s-Treasure-Box@main/%E7%8C%AB%E7%8C%AB%E5%AE%A1%E6%A0%A1%E5%99%A8.js';
     var _RAW='https://raw.githubusercontent.com/Shwx0324/Cat-s-Treasure-Box/main/%E7%8C%AB%E7%8C%AB%E5%AE%A1%E6%A0%A1%E5%99%A8.js';
@@ -33,6 +32,11 @@
 +'- *动作描写*（星号包裹的内容）\n'
 +'- 分隔线、特殊符号行\n'
 +'- 所有换行符、空行的大致格式\n\n'
++'【严禁添加原文中不存在的标签或标记】\n'
++'- 不能添加原文中没有的XML标签、方括号标签、状态栏等\n'
++'- 不能添加[incipere]、[finire]、[begin]、[end]等标记\n'
++'- 不能添加任何原文中不存在的结构性标签\n'
++'- 输出内容的标签种类和数量必须与原文一致\n\n'
 +'【禁词列表】替换为近义表达：\n{{WORDS}}\n\n'
 +'【限制词列表】超出次数的替换：\n{{LIMITS}}\n\n'
 +'【禁用句式】改写为其他表达：\n{{PATTERNS}}';
@@ -62,35 +66,38 @@
     function _extractTags(txt){var tags=[];var re=/<([^\/>\s]+)[^>]*>[\s\S]*?<\/\1>/g;var m;while((m=re.exec(txt))!==null){tags.push({tag:m[1],full:m[0]});}return tags;}
     function _cmpVer(a,b){var pa=a.split('.').map(Number),pb=b.split('.').map(Number);for(var i=0;i<Math.max(pa.length,pb.length);i++){var na=pa[i]||0,nb=pb[i]||0;if(nb>na)return 1;if(na>nb)return-1;}return 0;}
 
-    function _silentCheck(){
-        var urls=[_CDN,_RAW];
-        function tryFetch(i){if(i>=urls.length)return;fetch(urls[i]+'?t='+Date.now()).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(function(code){if(!code)return;var m=code.match(/_ver='([^']+)'/);if(!m)return;var rv=m[1];if(_cmpVer(_ver,rv)>0){console.log('[猫猫审校]发现新版本 v'+rv+'，尝试自动更新…');try{eval(code);_hasUpdate=false;_remoteVer='';_hideDot();_msg('success','✅ 已自动更新到v'+rv+'，请关闭面板重新打开',{timeOut:6000});console.log('[猫猫审校]自动更新成功 v'+rv);}catch(ex){console.warn('[猫猫审校]自动更新失败',ex);_hasUpdate=true;_remoteVer=rv;_showDot();_msg('warning','⚠️ 发现v'+rv+'，自动更新失败，请手动更新',{timeOut:5000});}}else{_hasUpdate=false;_remoteVer='';_hideDot();}}).catch(function(){tryFetch(i+1);});}tryFetch(0);
-    }
-
-    function _fetchUpdate(){
-        var urls=[_CDN,_RAW];
-        function tryFetch(i){if(i>=urls.length){_msg('error','所有更新源均不可用',{timeOut:3000});return Promise.reject();}return fetch(urls[i]+'?t='+Date.now()).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).catch(function(){return tryFetch(i+1);});}
-        return tryFetch(0);
-    }
-
+    function _silentCheck(){var urls=[_CDN,_RAW];function tryFetch(i){if(i>=urls.length)return;fetch(urls[i]+'?t='+Date.now()).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(function(code){if(!code)return;var m=code.match(/_ver='([^']+)'/);if(!m)return;var rv=m[1];if(_cmpVer(_ver,rv)>0){console.log('[猫猫审校]发现新版本 v'+rv+'，尝试自动更新…');try{eval(code);_hasUpdate=false;_remoteVer='';_hideDot();_msg('success','✅ 已自动更新到v'+rv+'，请关闭面板重新打开',{timeOut:6000});}catch(ex){console.warn('[猫猫审校]自动更新失败',ex);_hasUpdate=true;_remoteVer=rv;_showDot();_msg('warning','⚠️ 发现v'+rv+'，自动更新失败，请手动更新',{timeOut:5000});}}else{_hasUpdate=false;_remoteVer='';_hideDot();}}).catch(function(){tryFetch(i+1);});}tryFetch(0);}
+    function _fetchUpdate(){var urls=[_CDN,_RAW];function tryFetch(i){if(i>=urls.length){_msg('error','所有更新源均不可用',{timeOut:3000});return Promise.reject();}return fetch(urls[i]+'?t='+Date.now()).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).catch(function(){return tryFetch(i+1);});}return tryFetch(0);}
     function _getPJQ(){var pw;try{pw=window.parent||window;}catch(x){pw=window;}return pw.jQuery||pw.$||_jq;}
-    function _showDot(){var pJQ=_getPJQ();if(!pJQ)return;var dot=pJQ('#'+_id+'-updot');if(dot.length)dot.show();}
-    function _hideDot(){var pJQ=_getPJQ();if(!pJQ)return;var dot=pJQ('#'+_id+'-updot');if(dot.length)dot.hide();}
+    function _showDot(){var pJQ=_getPJQ();if(!pJQ)return;pJQ('#'+_id+'-updot').show();}
+    function _hideDot(){var pJQ=_getPJQ();if(!pJQ)return;pJQ('#'+_id+'-updot').hide();}
 
     function _validateResult(orig,result){
         var origLen=orig.replace(/\s+/g,'').length;var resLen=result.replace(/\s+/g,'').length;
         if(origLen===0)return{ok:true};var ratio=resLen/origLen;
-        if(ratio<0.3)return{ok:false,reason:'返回文本过短('+Math.round(ratio*100)+'%)，疑似删除原文'};
-        if(ratio>2.0)return{ok:false,reason:'返回文本过长('+Math.round(ratio*100)+'%)，疑似续写'};
+        if(ratio<0.3)return{ok:false,reason:'返回文本过短('+Math.round(ratio*100)+'%)，疑似删除原文，请检查API模型是否正常'};
+        if(ratio>2.0)return{ok:false,reason:'返回文本过长('+Math.round(ratio*100)+'%)，疑似续写了新内容'};
         var origParas=orig.split(/\n\s*\n/).filter(function(p){return p.trim();});
         var resParas=result.split(/\n\s*\n/).filter(function(p){return p.trim();});
-        if(origParas.length>=3&&resParas.length<origParas.length*0.5){return{ok:false,reason:'段落数减少过多('+origParas.length+'→'+resParas.length+')，疑似删减内容'};}
+        if(origParas.length>=3&&resParas.length<origParas.length*0.5){return{ok:false,reason:'段落数从'+origParas.length+'减少到'+resParas.length+'，疑似删减了大量内容'};}
         var origTags=_extractTags(orig);
-        for(var i=0;i<origTags.length;i++){if(result.indexOf(origTags[i].full)<0){var tagName=origTags[i].tag;var reCheck=new RegExp('<'+tagName+'[^>]*>[\\s\\S]*?<\\/'+tagName+'>');if(!reCheck.test(result)){console.warn('[猫猫审校]标签<'+tagName+'>在结果中未找到，但不拦截');}}}
+        for(var i=0;i<origTags.length;i++){if(result.indexOf(origTags[i].full)<0){var tagName=origTags[i].tag;var reCheck=new RegExp('<'+tagName+'[^>]*>[\\s\\S]*?<\\/'+tagName+'>');if(!reCheck.test(result)){console.warn('[猫猫审校]原文标签<'+tagName+'>在结果中未找到，但不拦截');}}}
+        var resTags=_extractTags(result);
+        var origTagNames={};origTags.forEach(function(t){origTagNames[t.tag]=true;});
+        var newTags=[];resTags.forEach(function(t){if(!origTagNames[t.tag])newTags.push(t.tag);});
+        var reBracket=/\[([^\]]+)\]/g;var origBrackets={};var m;
+        while((m=reBracket.exec(orig))!==null){origBrackets[m[1]]=true;}
+        reBracket.lastIndex=0;var newBrackets=[];
+        while((m=reBracket.exec(result))!==null){if(!origBrackets[m[1]])newBrackets.push(m[1]);}
+        if(newTags.length>0||newBrackets.length>0){
+            var added=newTags.map(function(t){return'<'+t+'>';}).concat(newBrackets.map(function(b){return'['+b+']';}));
+            return{ok:false,reason:'AI添加了原文不存在的标签: '+added.join('、')+'，已拦截'};
+        }
         return{ok:true};
     }
 
-    function _l(){try{var a=JSON.parse(localStorage.getItem(K.ap)||'{}');if(a.u)C.url=a.u;if(a.k)C.key=a.k;if(a.m)C.mdl=a.m;var w=JSON.parse(localStorage.getItem(K.wd)||'null');if(Array.isArray(w))C.wd=w;var p=JSON.parse(localStorage.getItem(K.pt)||'null');if(Array.isArray(p))C.pt=p;var r=localStorage.getItem(K.rl);if(r!==null)C.rl=r;var s=localStorage.getItem(K.sw);if(s!==null)C.sw=s==='true';var t=localStorage.getItem(K.rt);if(t!==null)C.rt=parseInt(t)||0;var e=localStorage.getItem(K.tp);if(e!==null)C.tp=parseFloat(e)||0.3;if(localStorage.getItem(K.spC)==='true'){var sp=localStorage.getItem(K.sp);C.sp=(sp&&sp.trim())?sp:_defSP;}else{C.sp=_defSP;}if(localStorage.getItem(K.siC)==='true'){var si=localStorage.getItem(K.si);C.si=(si&&si.trim())?si:_defSI;}else{C.si=_defSI;}var lw=localStorage.getItem(K.lw);if(lw){try{C.lw=JSON.parse(lw);}catch(x){C.lw=[];}}}catch(x){C.sp=_defSP;C.si=_defSI;}}function _s(){try{localStorage.setItem(K.ap,JSON.stringify({u:C.url,k:C.key,m:C.mdl}));localStorage.setItem(K.wd,JSON.stringify(C.wd));localStorage.setItem(K.pt,JSON.stringify(C.pt));localStorage.setItem(K.rl,C.rl);localStorage.setItem(K.sw,String(C.sw));localStorage.setItem(K.rt,String(C.rt));localStorage.setItem(K.tp,String(C.tp));localStorage.setItem(K.sp,C.sp);localStorage.setItem(K.si,C.si);localStorage.setItem(K.lw,JSON.stringify(C.lw));}catch(x){}}
+    function _l(){try{var a=JSON.parse(localStorage.getItem(K.ap)||'{}');if(a.u)C.url=a.u;if(a.k)C.key=a.k;if(a.m)C.mdl=a.m;var w=JSON.parse(localStorage.getItem(K.wd)||'null');if(Array.isArray(w))C.wd=w;var p=JSON.parse(localStorage.getItem(K.pt)||'null');if(Array.isArray(p))C.pt=p;var r=localStorage.getItem(K.rl);if(r!==null)C.rl=r;var s=localStorage.getItem(K.sw);if(s!==null)C.sw=s==='true';var t=localStorage.getItem(K.rt);if(t!==null)C.rt=parseInt(t)||0;var e=localStorage.getItem(K.tp);if(e!==null)C.tp=parseFloat(e)||0.3;if(localStorage.getItem(K.spC)==='true'){var sp=localStorage.getItem(K.sp);C.sp=(sp&&sp.trim())?sp:_defSP;}else{C.sp=_defSP;}if(localStorage.getItem(K.siC)==='true'){var si=localStorage.getItem(K.si);C.si=(si&&si.trim())?si:_defSI;}else{C.si=_defSI;}var lw=localStorage.getItem(K.lw);if(lw){try{C.lw=JSON.parse(lw);}catch(x){C.lw=[];}}}catch(x){C.sp=_defSP;C.si=_defSI;}}
+    function _s(){try{localStorage.setItem(K.ap,JSON.stringify({u:C.url,k:C.key,m:C.mdl}));localStorage.setItem(K.wd,JSON.stringify(C.wd));localStorage.setItem(K.pt,JSON.stringify(C.pt));localStorage.setItem(K.rl,C.rl);localStorage.setItem(K.sw,String(C.sw));localStorage.setItem(K.rt,String(C.rt));localStorage.setItem(K.tp,String(C.tp));localStorage.setItem(K.sp,C.sp);localStorage.setItem(K.si,C.si);localStorage.setItem(K.lw,JSON.stringify(C.lw));}catch(x){}}
     function _loadTh(){try{var r=localStorage.getItem(TK);if(r)return JSON.parse(r);}catch(x){}return{list:[],active:''};}
     function _saveTh(d){try{localStorage.setItem(TK,JSON.stringify(d));}catch(x){}}
     function _applyCSS(css){if(_activeStyle&&_activeStyle.parentNode){_activeStyle.parentNode.removeChild(_activeStyle);_activeStyle=null;}if(!css||!css.trim())return;var doc=(window.parent||window).document;var el=doc.createElement('style');el.setAttribute('data-mao-theme','1');el.textContent=css;doc.head.appendChild(el);_activeStyle=el;}
@@ -99,14 +106,38 @@
     function _sysP(overInfo){var wl=C.wd.filter(function(x){return x.trim();});var ws=wl.length>0?wl.join('、'):'（无）';var ls='（无）';if(C.lw.length>0)ls=C.lw.map(function(x){return'「'+x.w+'」最多'+x.n+'次';}).join('、');var pl=C.pt.filter(function(x){return x.trim();});var ps=pl.length>0?pl.join('\n'):'（无）';var extraParts=[];if(C.rl&&C.rl.trim())extraParts.push(C.rl.trim());if(overInfo)extraParts.push(overInfo);var extra=extraParts.length>0?extraParts.join('\n\n'):'（无）';var work=C.sp||_defSP;work=work.replace(/\{\{WORDS\}\}/g,ws).replace(/\{\{LIMITS\}\}/g,ls).replace(/\{\{PATTERNS\}\}/g,ps).replace(/\{\{EXTRA\}\}/g,extra);var identity=C.si||'';if(identity.trim())return identity.trim()+'\n\n'+work;return work;}
     function _ep(){var u=C.url.trim();if(!u)throw new Error('无API地址');if(u.charAt(u.length-1)!=='/')u+='/';if(u.indexOf('googleapis.com')>=0){if(u.indexOf('chat/completions')<0)u+='chat/completions';}else{if(u.indexOf('/chat/completions')<0)u+=(u.indexOf('/v1/')>=0?'':'v1/')+'chat/completions';}return u;}
     function _clean(raw){var s=raw.trim();var m=s.match(/^```[\s\S]*?\n([\s\S]*?)\n```$/);if(m)s=m[1];s=s.replace(/^---[^\n]*---\n?/,'').replace(/\n?---[^\n]*---$/,'');if((s.charAt(0)==='"'&&s.charAt(s.length-1)==='"')||(s.charAt(0)==="'"&&s.charAt(s.length-1)==="'"))s=s.substring(1,s.length-1);s=s.replace(/^\n+/,'').replace(/\n+$/,'');return s;}
-    async function _call(txt,overInfo){if(!C.url||!C.mdl)throw new Error('API未配置');var h={'Content-Type':'application/json'};if(C.key)h['Authorization']='Bearer '+C.key;var sys=_sysP(overInfo);var userMsg='以下是需要审校修改的原文（共'+txt.length+'字）。\n请在原文基础上进行修改，替换禁词/限制词/禁用句式，并按照指令润色。\n输出修改后的完整文本，不能续写也不能删减原文内容。\n\n---原文开始---\n'+txt+'\n---原文结束---';var r=await fetch(_ep(),{method:'POST',headers:h,body:JSON.stringify({model:C.mdl,temperature:C.tp,stream:false,messages:[{role:'system',content:sys},{role:'user',content:userMsg}]})});if(!r.ok)throw new Error('API '+r.status);var j=await r.json();var c=j&&j.choices&&j.choices[0]&&j.choices[0].message?j.choices[0].message.content:null;if(!c||!c.trim())throw new Error('API返回空');var cleaned=_clean(c);var v=_validateResult(txt,cleaned);if(!v.ok){console.warn('[猫猫审校]拦截: '+v.reason);return{changed:false,text:'',fixes:[],rejected:true,reason:v.reason};}if(cleaned.replace(/\s+/g,'')===txt.replace(/\s+/g,''))return{changed:false,text:'',fixes:[]};var fixes=[];C.wd.forEach(function(w){w=w.trim();if(!w)return;if(txt.indexOf(w)>=0&&cleaned.indexOf(w)<0)fixes.push({s:w,d:'(已替换)',r:'禁词'});});C.lw.forEach(function(item){var before=_countWord(txt,item.w);var after=_countWord(cleaned,item.w);if(before>item.n&&after<before)fixes.push({s:item.w+'('+before+'→'+after+')',d:'限'+item.n+'次',r:'限制词'});});if(fixes.length===0&&cleaned!==txt)fixes.push({s:'(润色改写)',d:'按指令修改',r:'改写'});return{changed:true,text:cleaned,fixes:fixes};}
+
+    async function _call(txt,overInfo){
+        if(!C.url)throw new Error('未配置API地址，请在「接口」页填写');
+        if(!C.mdl)throw new Error('未选择模型，请在「接口」页加载并选择模型');
+        var h={'Content-Type':'application/json'};if(C.key)h['Authorization']='Bearer '+C.key;
+        var sys=_sysP(overInfo);
+        var userMsg='以下是需要审校修改的原文（共'+txt.length+'字）。\n请在原文基础上进行修改，替换禁词/限制词/禁用句式，并按照指令润色。\n输出修改后的完整文本，不能续写也不能删减原文内容。\n\n---原文开始---\n'+txt+'\n---原文结束---';
+        var r;try{r=await fetch(_ep(),{method:'POST',headers:h,body:JSON.stringify({model:C.mdl,temperature:C.tp,stream:false,messages:[{role:'system',content:sys},{role:'user',content:userMsg}]})});}catch(e){throw new Error('网络请求失败: '+e.message+'，请检查API地址是否正确、网络是否通畅');}
+        if(r.status===401)throw new Error('API认证失败(401)，请检查API Key是否正确');
+        if(r.status===403)throw new Error('API拒绝访问(403)，请检查API Key权限');
+        if(r.status===404)throw new Error('API地址错误(404)，请检查地址和模型名称');
+        if(r.status===429)throw new Error('API请求过于频繁(429)，请稍后再试');
+        if(r.status>=500)throw new Error('API服务端错误('+r.status+')，请稍后再试或更换模型');
+        if(!r.ok){var errBody='';try{varej=await r.json();errBody=ej.error&&ej.error.message?ej.error.message:JSON.stringify(ej);}catch(x){errBody=r.statusText;}throw new Error('API错误('+r.status+'): '+errBody);}
+        var j;try{j=await r.json();}catch(e){throw new Error('API返回的不是有效JSON，可能API地址不正确');}
+        var c=j&&j.choices&&j.choices[0]&&j.choices[0].message?j.choices[0].message.content:null;
+        if(!c||!c.trim()){var finishReason=j&&j.choices&&j.choices[0]?j.choices[0].finish_reason:'';if(finishReason==='length')throw new Error('API返回为空(finish_reason=length)，模型输出被截断，请增大max_tokens或缩短原文');if(finishReason==='content_filter')throw new Error('API返回为空(content_filter)，内容被安全过滤器拦截');throw new Error('API返回空内容(finish_reason='+(finishReason||'未知')+')，请检查模型是否正常');}
+        var cleaned=_clean(c);
+        if(cleaned.length<5)throw new Error('API返回内容过短('+cleaned.length+'字)，可能模型未正确理解指令');
+        var v=_validateResult(txt,cleaned);
+        if(!v.ok){console.warn('[猫猫审校]拦截: '+v.reason);return{changed:false,text:'',fixes:[],rejected:true,reason:v.reason};}
+        if(cleaned.replace(/\s+/g,'')===txt.replace(/\s+/g,''))return{changed:false,text:'',fixes:[]};
+        var fixes=[];C.wd.forEach(function(w){w=w.trim();if(!w)return;if(txt.indexOf(w)>=0&&cleaned.indexOf(w)<0)fixes.push({s:w,d:'(已替换)',r:'禁词'});});C.lw.forEach(function(item){var before=_countWord(txt,item.w);var after=_countWord(cleaned,item.w);if(before>item.n&&after<before)fixes.push({s:item.w+'('+before+'→'+after+')',d:'限'+item.n+'次',r:'限制词'});});if(fixes.length===0&&cleaned!==txt)fixes.push({s:'(润色改写)',d:'按指令修改',r:'改写'});return{changed:true,text:cleaned,fixes:fixes};
+    }
+
     async function _models(){var u=C.url.trim();if(!u)throw new Error('填写API地址');if(u.charAt(u.length-1)!=='/')u+='/';if(u.indexOf('googleapis.com')>=0){if(u.indexOf('models')<0)u+='models';}else{if(u.indexOf('models')<0)u+=(u.indexOf('/v1/')>=0?'':'v1/')+'models';}var h={'Content-Type':'application/json'};if(C.key)h['Authorization']='Bearer '+C.key;var r=await fetch(u,{method:'GET',headers:h});if(!r.ok)throw new Error(''+r.status);var d=await r.json();if(d&&d.data&&Array.isArray(d.data))return d.data.map(function(m){return m.id;}).filter(Boolean);if(Array.isArray(d))return d.map(function(m){return typeof m==='string'?m:m.id;}).filter(Boolean);return[];}
     function _findLastAI(){var ctx=_ctx();if(!ctx||!ctx.chat||!ctx.chat.length)return-1;for(var i=ctx.chat.length-1;i>=0;i--){var m=ctx.chat[i];if(m&&!m.is_user&&!m.is_system)return i;}return-1;}
     function _unveil(idx){if(!_jq)return;var $m=_jq('.mes[mesid="'+idx+'"]');if(!$m.length)return;$m.find('.mes_text').css({'filter':'none','pointer-events':'','user-select':''});$m.find('.mp-checking').remove();}
     function _veil(idx){if(!_jq)return;var $m=_jq('.mes[mesid="'+idx+'"]');if(!$m.length)return;var $t=$m.find('.mes_text');$t.css({'filter':'blur(8px)','pointer-events':'none','user-select':'none','transition':'filter .3s'});if(!$m.find('.mp-checking').length)$t.parent().append('<div class="mp-checking" style="text-align:center;padding:8px;font-size:0.85rem;color:#7c3aed;font-weight:600">🔍审校中…</div>');}
     async function _applyResult(ctx,idx,msgData,newText){ctx.chat[idx].mes=newText;var saved=false;try{if(ctx.saveChatConditional){await ctx.saveChatConditional();saved=true;}}catch(x){console.log('[猫猫审校]saveChatConditional失败',x);}if(!saved){try{if(ctx.saveChat){await ctx.saveChat();saved=true;}}catch(x){console.log('[猫猫审校]saveChat失败',x);}}if(!saved){try{if(ctx.executeSlashCommands){await ctx.executeSlashCommands('/savechat');saved=true;}}catch(x){}}var reloaded=false;var pw=(window.parent||window);try{if(pw.reloadCurrentChat){await pw.reloadCurrentChat();reloaded=true;}}catch(x){console.log('[猫猫审校]reloadChat(pw)失败',x);}if(!reloaded){try{if(ctx.reloadCurrentChat){await ctx.reloadCurrentChat();reloaded=true;}}catch(x){console.log('[猫猫审校]reloadChat(ctx)失败',x);}}if(!reloaded){var $txt=_jq('.mes[mesid="'+idx+'"] .mes_text');if($txt.length){var fmtDone=false;try{if(ctx.messageFormatting){$txt.html(ctx.messageFormatting(newText,msgData.name,false,false,idx));fmtDone=true;}}catch(x){}if(!fmtDone){try{if(pw.messageFormatting){$txt.html(pw.messageFormatting(newText,msgData.name,false,false,idx));fmtDone=true;}}catch(x){}}if(!fmtDone)$txt.html(newText.replace(/\n/g,'<br>'));}}}
-    async function _doCheck(idx,force){if(_busy)return;if(!C.url||!C.mdl){_unveil(idx);return;}var hasRules=C.wd.some(function(x){return x.trim();})||C.lw.length>0||(C.rl&&C.rl.trim())||C.pt.some(function(x){return x.trim();});if(!hasRules){_unveil(idx);return;}var ctx=_ctx();if(!ctx||!ctx.chat||!ctx.chat[idx]){_msg('error','无法获取聊天数据');_unveil(idx);return;}var msgData=ctx.chat[idx];var orig=msgData.mes||msgData.message||'';if(msgData.is_user||msgData.is_system||!orig||orig.trim().length<2){_unveil(idx);return;}if(!force&&_isChecked(idx,orig)){_unveil(idx);return;}_busy=true;var currentText=orig;var allFixes=[];var maxRounds=1+(C.rt||0);try{for(var round=0;round<maxRounds;round++){var ol=_checkLimits(currentText);var overInfo='';if(ol.length>0){overInfo='以下限制用词超标：\n';ol.forEach(function(o){overInfo+='「'+o.w+'」限'+o.max+'次，实际'+o.actual+'次，需减少'+o.excess+'处\n';});}var hw=C.wd.some(function(w){return w.trim()&&currentText.indexOf(w.trim())>=0;});if(!hw&&ol.length===0&&round>0)break;var res=await _call(currentText,overInfo||null);if(res.rejected){_msg('warning','⚠️ '+res.reason+'，原文保持不变',{timeOut:4000});break;}if(res.changed&&res.text){currentText=res.text;allFixes=allFixes.concat(res.fixes);}else break;}if(currentText!==orig&&allFixes.length>0){_addLog(allFixes);await _applyResult(ctx,idx,msgData,currentText);_markChecked(idx,currentText);var brief=allFixes.slice(0,3).map(function(f){return'「'+f.s+'」';}).join('、');if(allFixes.length>3)brief+='…等'+allFixes.length+'处';_msg('success','✅ '+brief+(maxRounds>1?' ('+maxRounds+'轮)':''),{timeOut:4000});if(_popup)_refreshLog();}else if(currentText!==orig){await _applyResult(ctx,idx,msgData,currentText);_markChecked(idx,currentText);_msg('success','✅ 已修正',{timeOut:2000});}else{_markChecked(idx,orig);if(force)_msg('success','✅ 无需修正',{timeOut:1500});}}catch(e){_msg('error','审校失败: '+e.message,{timeOut:5000});console.error('[猫猫审校]',e);}finally{_busy=false;_unveil(idx);}}
-    function _refreshLog(){if(!_popup)return;var logs=_loadLogs();var $box=_popup.find('#mp-logbox');if(!$box.length)return;if(!logs.length){$box.html('<div class="mp-nt" style="text-align:center;padding:20px">暂无记录</div>');return;}var h='';for(var i=logs.length-1;i>=0;i--){var log=logs[i];h+='<div class="mp-logitem"><div class="mp-logtime">'+_e(log.ts)+' · '+log.fl.length+'处</div>';log.fl.forEach(function(f){h+='<div class="mp-logfix"><span class="mp-logold">'+_e(f.s||'')+'</span><span class="mp-logarrow">→</span><span class="mp-lognew">'+_e(f.d||'')+'</span>';if(f.r)h+='<span class="mp-logreason">('+_e(f.r)+')</span>';h+='</div>';});h+='</div>';}$box.html(h);}
+
+    async function _doCheck(idx,force){if(_busy)return;if(!C.url||!C.mdl){_unveil(idx);return;}var hasRules=C.wd.some(function(x){return x.trim();})||C.lw.length>0||(C.rl&&C.rl.trim())||C.pt.some(function(x){return x.trim();});if(!hasRules){_unveil(idx);return;}var ctx=_ctx();if(!ctx||!ctx.chat||!ctx.chat[idx]){_msg('error','无法获取聊天数据，请确认已打开聊天');_unveil(idx);return;}var msgData=ctx.chat[idx];var orig=msgData.mes||msgData.message||'';if(msgData.is_user||msgData.is_system||!orig||orig.trim().length<2){_unveil(idx);return;}if(!force&&_isChecked(idx,orig)){_unveil(idx);return;}_busy=true;var currentText=orig;var allFixes=[];var maxRounds=1+(C.rt||0);try{for(var round=0;round<maxRounds;round++){var ol=_checkLimits(currentText);var overInfo='';if(ol.length>0){overInfo='以下限制用词超标：\n';ol.forEach(function(o){overInfo+='「'+o.w+'」限'+o.max+'次，实际'+o.actual+'次，需减少'+o.excess+'处\n';});}var hw=C.wd.some(function(w){return w.trim()&&currentText.indexOf(w.trim())>=0;});if(!hw&&ol.length===0&&round>0)break;var res=await _call(currentText,overInfo||null);if(res.rejected){_msg('warning','⚠️ '+res.reason,{timeOut:6000});break;}if(res.changed&&res.text){currentText=res.text;allFixes=allFixes.concat(res.fixes);}else break;}if(currentText!==orig&&allFixes.length>0){_addLog(allFixes);await _applyResult(ctx,idx,msgData,currentText);_markChecked(idx,currentText);var brief=allFixes.slice(0,3).map(function(f){return'「'+f.s+'」';}).join('、');if(allFixes.length>3)brief+='…等'+allFixes.length+'处';_msg('success','✅ '+brief+(maxRounds>1?' ('+maxRounds+'轮)':''),{timeOut:4000});if(_popup)_refreshLog();}else if(currentText!==orig){await _applyResult(ctx,idx,msgData,currentText);_markChecked(idx,currentText);_msg('success','✅ 已修正',{timeOut:2000});}else{_markChecked(idx,orig);if(force)_msg('success','✅ 无需修正',{timeOut:1500});}}catch(e){_msg('error','❌ 审校失败: '+e.message,{timeOut:8000});console.error('[猫猫审校]审校失败详情:',e);console.error('[猫猫审校]当前配置: URL='+C.url+'模型='+C.mdl+' 温度='+C.tp);}finally{_busy=false;_unveil(idx);}}function _refreshLog(){if(!_popup)return;var logs=_loadLogs();var $box=_popup.find('#mp-logbox');if(!$box.length)return;if(!logs.length){$box.html('<div class="mp-nt" style="text-align:center;padding:20px">暂无记录</div>');return;}var h='';for(var i=logs.length-1;i>=0;i--){var log=logs[i];h+='<div class="mp-logitem"><div class="mp-logtime">'+_e(log.ts)+' · '+log.fl.length+'处</div>';log.fl.forEach(function(f){h+='<div class="mp-logfix"><span class="mp-logold">'+_e(f.s||'')+'</span><span class="mp-logarrow">→</span><span class="mp-lognew">'+_e(f.d||'')+'</span>';if(f.r)h+='<span class="mp-logreason">('+_e(f.r)+')</span>';h+='</div>';});h+='</div>';}$box.html(h);}
     function _refreshPTSel(){if(!_popup)return;var pd=_loadPT();var $s=_popup.find('#mp-ptsel');$s.empty().append('<option value="">— 选择预设 —</option>');pd.list.forEach(function(p){$s.append('<option value="'+_e(p.name)+'"'+(p.name===pd.active?' selected':'')+'>'+_e(p.name)+'</option>');});}
     function _refreshRLSel(){if(!_popup)return;var rd=_loadRL();var $s=_popup.find('#mp-rlsel');$s.empty().append('<option value="">— 选择预设 —</option>');rd.list.forEach(function(p){$s.append('<option value="'+_e(p.name)+'"'+(p.name===rd.active?' selected':'')+'>'+_e(p.name)+'</option>');});}
                 async function _openUI(){
@@ -157,7 +188,7 @@
 +'</div>';
         popupFn(H,popupType.DISPLAY,'猫猫审校器',{wide:true,large:true,allowVerticalScrolling:true,buttons:[],callback:function(){_popup=null;}});
         setTimeout(function(){var f=null;_jq('dialog[open]').each(function(){var x=_jq(this).find('#'+_id+'-popup');if(x.length){f=x;return false;}});if(!f)return;_popup=f;_bindUI();_refreshLog();},350);
-                }
+            }
                 function _bindUI(){
         if(!_popup)return;var P=_popup,J=_jq;
         P.find('.mp-tab').on('click',function(){var tab=J(this).attr('data-tab');P.find('.mp-tab').removeClass('active');J(this).addClass('active');P.find('.mp-page').removeClass('active');P.find('#mp-'+tab).addClass('active');});
@@ -191,12 +222,10 @@
 
     var _menuAtt=0,_menuDone=false;
     function _addMenu(){
-        if(_menuDone)return;
-        _menuAtt++;
+        if(_menuDone)return;_menuAtt++;
         var pw;try{pw=window.parent||window;}catch(x){pw=window;}
         var pJQ=pw.jQuery||pw.$||_jq;
         if(!pJQ){if(_menuAtt<60){setTimeout(_addMenu,3000);}return;}
-
         var menu=pJQ('#extensionsMenu');
         if(menu.length&&!pJQ('#'+_id+'-mi').length){
             var wrap=pJQ('<div class="extension_container interactable" id="'+_id+'-mi" tabindex="0" style="position:relative"></div>');
@@ -208,7 +237,6 @@
             if(_hasUpdate)dot.show();
             _menuDone=true;console.log('[猫猫审校]菜单已挂载(扩展菜单)');return;
         }
-
         if(_menuAtt>=10&&!pJQ('#'+_id+'-float').length){
             if(!pJQ('#mp-dot-style').length){pJQ('<style id="mp-dot-style">@keyframes mp-dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(0.8)}}</style>').appendTo(pJQ('head'));}
             var fb=pJQ('<div id="'+_id+'-float" style="position:fixed;bottom:80px;right:16px;z-index:99999;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;box-shadow:0 4px 15px rgba(124,58,237,0.4);transition:transform .2s;user-select:none" title="猫猫审校器">🐾</div>');
@@ -221,7 +249,6 @@
             if(_hasUpdate)fdot.show();
             _menuDone=true;console.log('[猫猫审校]菜单已挂载(浮动按钮)');return;
         }
-
         if(_menuAtt<60){setTimeout(_addMenu,3000);}
     }
 
