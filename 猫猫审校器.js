@@ -32,11 +32,13 @@
 +'- *动作描写*（星号包裹的内容）\n'
 +'- 分隔线、特殊符号行\n'
 +'- 所有换行符、空行的大致格式\n\n'
-+'【严禁添加原文中不存在的标签或标记】\n'
-+'- 不能添加原文中没有的XML标签、方括号标签、状态栏等\n'
-+'- 不能添加[incipere]、[finire]、[begin]、[end]等标记\n'
-+'- 不能添加任何原文中不存在的结构性标签\n'
-+'- 输出内容的标签种类和数量必须与原文一致\n\n'
++'【严禁增删任何形式的标签或标记】\n'
++'- 严禁添加原文中不存在的任何标签，包括但不限于：XML标签<>、方括号标签[]、花括号标签{{}}、星号标记**等\n'
++'- 严禁删除原文中已有的任何标签\n'
++'- 严禁添加[incipere]、[finire]、[begin]、[end]、[scene]等原文没有的标记\n'
++'- 严禁添加<br>、<p>、<div>等HTML标签（除非原文已有）\n'
++'- 输出内容中所有标签的种类、数量、位置必须与原文保持一致\n'
++'- 如果不确定是否该加标签，就不要加\n\n'
 +'【禁词列表】替换为近义表达：\n{{WORDS}}\n\n'
 +'【限制词列表】超出次数的替换：\n{{LIMITS}}\n\n'
 +'【禁用句式】改写为其他表达：\n{{PATTERNS}}';
@@ -80,18 +82,42 @@
         var origParas=orig.split(/\n\s*\n/).filter(function(p){return p.trim();});
         var resParas=result.split(/\n\s*\n/).filter(function(p){return p.trim();});
         if(origParas.length>=3&&resParas.length<origParas.length*0.5){return{ok:false,reason:'段落数从'+origParas.length+'减少到'+resParas.length+'，疑似删减了大量内容'};}
-        var origTags=_extractTags(orig);
-        for(var i=0;i<origTags.length;i++){if(result.indexOf(origTags[i].full)<0){var tagName=origTags[i].tag;var reCheck=new RegExp('<'+tagName+'[^>]*>[\\s\\S]*?<\\/'+tagName+'>');if(!reCheck.test(result)){console.warn('[猫猫审校]原文标签<'+tagName+'>在结果中未找到，但不拦截');}}}
-        var resTags=_extractTags(result);
-        var origTagNames={};origTags.forEach(function(t){origTagNames[t.tag]=true;});
-        var newTags=[];resTags.forEach(function(t){if(!origTagNames[t.tag])newTags.push(t.tag);});
-        var reBracket=/\[([^\]]+)\]/g;var origBrackets={};var m;
-        while((m=reBracket.exec(orig))!==null){origBrackets[m[1]]=true;}
-        reBracket.lastIndex=0;var newBrackets=[];
-        while((m=reBracket.exec(result))!==null){if(!origBrackets[m[1]])newBrackets.push(m[1]);}
-        if(newTags.length>0||newBrackets.length>0){
-            var added=newTags.map(function(t){return'<'+t+'>';}).concat(newBrackets.map(function(b){return'['+b+']';}));
-            return{ok:false,reason:'AI添加了原文不存在的标签: '+added.join('、')+'，已拦截'};
+
+        var problems=[];
+
+        // 检测XML标签 <tag>...</tag>
+        var origXML=_extractTags(orig);
+        var resXML=_extractTags(result);
+        var origXNames={};origXML.forEach(function(t){origXNames[t.tag]=(origXNames[t.tag]||0)+1;});
+        var resXNames={};resXML.forEach(function(t){resXNames[t.tag]=(resXNames[t.tag]||0)+1;});
+        for(var xk in resXNames){if(!origXNames[xk])problems.push('新增<'+xk+'>');}
+        for(var xk2 in origXNames){if(!resXNames[xk2])problems.push('丢失<'+xk2+'>');}
+
+        // 检测方括号标签 [tag]
+        var reBracket=/\[([^\]]+)\]/g;var m;
+        var origBK={};while((m=reBracket.exec(orig))!==null){origBK[m[1]]=(origBK[m[1]]||0)+1;}
+        reBracket.lastIndex=0;
+        var resBK={};while((m=reBracket.exec(result))!==null){resBK[m[1]]=(resBK[m[1]]||0)+1;}
+        for(var bk in resBK){if(!origBK[bk])problems.push('新增['+bk+']');}
+        for(var bk2 in origBK){if(!resBK[bk2])problems.push('丢失['+bk2+']');}
+
+        // 检测花括号变量 {{var}}
+        var reCurly=/\{\{([^}]+)\}\}/g;
+        var origCR={};while((m=reCurly.exec(orig))!==null){origCR[m[1]]=(origCR[m[1]]||0)+1;}
+        reCurly.lastIndex=0;
+        var resCR={};while((m=reCurly.exec(result))!==null){resCR[m[1]]=(resCR[m[1]]||0)+1;}
+        for(var ck in resCR){if(!origCR[ck])problems.push('新增{{'+ck+'}}');}
+        for(var ck2 in origCR){if(!resCR[ck2])problems.push('丢失{{'+ck2+'}}');}
+
+        // 检测自闭合/单标签 <br> <hr> <p>等
+        var reSingle=/<(br|hr|p|div|span|img|input)[\s\/]*>/gi;
+        var origSG={};while((m=reSingle.exec(orig))!==null){var sn=m[1].toLowerCase();origSG[sn]=(origSG[sn]||0)+1;}
+        reSingle.lastIndex=0;
+        var resSG={};while((m=reSingle.exec(result))!==null){var sn2=m[1].toLowerCase();resSG[sn2]=(resSG[sn2]||0)+1;}
+        for(var sk in resSG){if(!origSG[sk])problems.push('新增<'+sk+'>');}
+
+        if(problems.length>0){
+            return{ok:false,reason:'标签变动: '+problems.slice(0,5).join('、')+(problems.length>5?'…等'+problems.length+'处':'')+'，已拦截'};
         }
         return{ok:true};
     }
