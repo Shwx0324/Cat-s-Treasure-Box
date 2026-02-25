@@ -75,52 +75,33 @@
     function _hideDot(){var pJQ=_getPJQ();if(!pJQ)return;pJQ('#'+_id+'-updot').hide();}
 
     function _validateResult(orig,result){
+        function _validateResult(orig,result){
         var origLen=orig.replace(/\s+/g,'').length;var resLen=result.replace(/\s+/g,'').length;
         if(origLen===0)return{ok:true};var ratio=resLen/origLen;
-        if(ratio<0.3)return{ok:false,reason:'返回文本过短('+Math.round(ratio*100)+'%)，疑似删除原文，请检查API模型是否正常'};
-        if(ratio>2.0)return{ok:false,reason:'返回文本过长('+Math.round(ratio*100)+'%)，疑似续写了新内容'};
+        if(ratio<0.2)return{ok:false,reason:'返回文本过短('+Math.round(ratio*100)+'%)，疑似删除原文，请检查API模型是否正常'};
+        if(ratio>2.5)return{ok:false,reason:'返回文本过长('+Math.round(ratio*100)+'%)，疑似续写了新内容'};
         var origParas=orig.split(/\n\s*\n/).filter(function(p){return p.trim();});
         var resParas=result.split(/\n\s*\n/).filter(function(p){return p.trim();});
-        if(origParas.length>=3&&resParas.length<origParas.length*0.5){return{ok:false,reason:'段落数从'+origParas.length+'减少到'+resParas.length+'，疑似删减了大量内容'};}
-
-        var problems=[];
-
-        // 检测XML标签 <tag>...</tag>
-        var origXML=_extractTags(orig);
-        var resXML=_extractTags(result);
-        var origXNames={};origXML.forEach(function(t){origXNames[t.tag]=(origXNames[t.tag]||0)+1;});
-        var resXNames={};resXML.forEach(function(t){resXNames[t.tag]=(resXNames[t.tag]||0)+1;});
-        for(var xk in resXNames){if(!origXNames[xk])problems.push('新增<'+xk+'>');}
-        for(var xk2 in origXNames){if(!resXNames[xk2])problems.push('丢失<'+xk2+'>');}
-
-        // 检测方括号标签 [tag]
-        var reBracket=/\[([^\]]+)\]/g;var m;
-        var origBK={};while((m=reBracket.exec(orig))!==null){origBK[m[1]]=(origBK[m[1]]||0)+1;}
-        reBracket.lastIndex=0;
-        var resBK={};while((m=reBracket.exec(result))!==null){resBK[m[1]]=(resBK[m[1]]||0)+1;}
-        for(var bk in resBK){if(!origBK[bk])problems.push('新增['+bk+']');}
-        for(var bk2 in origBK){if(!resBK[bk2])problems.push('丢失['+bk2+']');}
-
-        // 检测花括号变量 {{var}}
-        var reCurly=/\{\{([^}]+)\}\}/g;
-        var origCR={};while((m=reCurly.exec(orig))!==null){origCR[m[1]]=(origCR[m[1]]||0)+1;}
-        reCurly.lastIndex=0;
-        var resCR={};while((m=reCurly.exec(result))!==null){resCR[m[1]]=(resCR[m[1]]||0)+1;}
-        for(var ck in resCR){if(!origCR[ck])problems.push('新增{{'+ck+'}}');}
-        for(var ck2 in origCR){if(!resCR[ck2])problems.push('丢失{{'+ck2+'}}');}
-
-        // 检测自闭合/单标签 <br> <hr> <p>等
-        var reSingle=/<(br|hr|p|div|span|img|input)[\s\/]*>/gi;
-        var origSG={};while((m=reSingle.exec(orig))!==null){var sn=m[1].toLowerCase();origSG[sn]=(origSG[sn]||0)+1;}
-        reSingle.lastIndex=0;
-        var resSG={};while((m=reSingle.exec(result))!==null){var sn2=m[1].toLowerCase();resSG[sn2]=(resSG[sn2]||0)+1;}
-        for(var sk in resSG){if(!origSG[sk])problems.push('新增<'+sk+'>');}
-
-        if(problems.length>0){
-            return{ok:false,reason:'标签变动: '+problems.slice(0,5).join('、')+(problems.length>5?'…等'+problems.length+'处':'')+'，已拦截'};
+        if(origParas.length>=5&&resParas.length<origParas.length*0.3){return{ok:false,reason:'段落数从'+origParas.length+'减少到'+resParas.length+'，疑似删减了大量内容'};}
+        var origTags=_extractTags(orig);
+        for(var i=0;i<origTags.length;i++){
+            var tagName=origTags[i].tag;
+            var reCheck=new RegExp('<'+tagName+'[^>]*>[\\s\\S]*?<\\/'+tagName+'>');
+            if(!reCheck.test(result)){
+                console.warn('[猫猫审校]原文标签<'+tagName+'>在结果中未找到，但不拦截');
+            }
+        }
+        var knownBad=['incipere','finire','begin','end','start','finish','note','comment','edit','revision'];
+        var reBadBracket=/\[([^\]]+)\]/g;var m;var badFound=[];
+        while((m=reBadBracket.exec(result))!==null){
+            var tag=m[1].toLowerCase().trim();
+            if(knownBad.indexOf(tag)>=0&&orig.indexOf(m[0])<0){badFound.push('['+m[1]+']');}
+        }
+        if(badFound.length>0){
+            return{ok:false,reason:'AI添加了无关标记: '+badFound.join('、')+'，已拦截并保留原文'};
         }
         return{ok:true};
-    }
+        }
 
     function _l(){try{var a=JSON.parse(localStorage.getItem(K.ap)||'{}');if(a.u)C.url=a.u;if(a.k)C.key=a.k;if(a.m)C.mdl=a.m;var w=JSON.parse(localStorage.getItem(K.wd)||'null');if(Array.isArray(w))C.wd=w;var p=JSON.parse(localStorage.getItem(K.pt)||'null');if(Array.isArray(p))C.pt=p;var r=localStorage.getItem(K.rl);if(r!==null)C.rl=r;var s=localStorage.getItem(K.sw);if(s!==null)C.sw=s==='true';var t=localStorage.getItem(K.rt);if(t!==null)C.rt=parseInt(t)||0;var e=localStorage.getItem(K.tp);if(e!==null)C.tp=parseFloat(e)||0.3;if(localStorage.getItem(K.spC)==='true'){var sp=localStorage.getItem(K.sp);C.sp=(sp&&sp.trim())?sp:_defSP;}else{C.sp=_defSP;}if(localStorage.getItem(K.siC)==='true'){var si=localStorage.getItem(K.si);C.si=(si&&si.trim())?si:_defSI;}else{C.si=_defSI;}var lw=localStorage.getItem(K.lw);if(lw){try{C.lw=JSON.parse(lw);}catch(x){C.lw=[];}}}catch(x){C.sp=_defSP;C.si=_defSI;}}
     function _s(){try{localStorage.setItem(K.ap,JSON.stringify({u:C.url,k:C.key,m:C.mdl}));localStorage.setItem(K.wd,JSON.stringify(C.wd));localStorage.setItem(K.pt,JSON.stringify(C.pt));localStorage.setItem(K.rl,C.rl);localStorage.setItem(K.sw,String(C.sw));localStorage.setItem(K.rt,String(C.rt));localStorage.setItem(K.tp,String(C.tp));localStorage.setItem(K.sp,C.sp);localStorage.setItem(K.si,C.si);localStorage.setItem(K.lw,JSON.stringify(C.lw));}catch(x){}}
