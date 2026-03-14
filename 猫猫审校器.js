@@ -110,8 +110,12 @@
     async function _call(txt,overInfo){
         if(!C.url)throw new Error('未配置API地址，请在「接口」页填写');
         if(!C.mdl)throw new Error('未选择模型，请在「接口」页加载并选择模型');
-        var h={'Content-Type':'application/json'};if(C.key)h['Authorization']='Bearer '+C.key;
-        var sys=_sysP(overInfo);
+        try{var ping=await fetch(_ep(),{method:'OPTIONS',signal:AbortSignal.timeout(8000)});} catch(e){
+            try{await fetch(C.url.trim(),{method:'HEAD',signal:AbortSignal.timeout(8000)});}catch(e2){
+                throw new Error('无法连接到API服务器，请检查：\n1. API地址是否正确\n2. 网络/代理是否正常\n3. API服务是否在线');
+            }
+        }
+        var h={'Content-Type':'application/json'};if(C.key)h['Authorization']='Bearer '+C.key;        var sys=_sysP(overInfo);
         var userMsg='以下是需要审校修改的原文（共'+txt.length+'字）。\n请在原文基础上进行修改，替换禁词/限制词/禁用句式，并按照指令润色。\n输出修改后的完整文本，不能续写也不能删减原文内容。\n\n---原文开始---\n'+txt+'\n---原文结束---';
         var r,body=JSON.stringify({model:C.mdl,temperature:C.tp,stream:false,messages:[{role:'system',content:sys},{role:'user',content:userMsg}]});
         var maxRetry=3,lastErr='';
