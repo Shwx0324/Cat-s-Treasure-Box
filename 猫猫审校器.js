@@ -134,7 +134,7 @@
         if(r.status===404)throw new Error('API地址错误(404)，请检查地址和模型名称');
         if(r.status===429)throw new Error('API请求过于频繁(429)，请稍后再试');
         if(r.status>=500)throw new Error('API服务端错误('+r.status+')，请稍后再试或更换模型');
-        if(!r.ok){var errBody='';try{varej=await r.json();errBody=ej.error&&ej.error.message?ej.error.message:JSON.stringify(ej);}catch(x){errBody=r.statusText;}throw new Error('API错误('+r.status+'): '+errBody);}
+        if(!r.ok){var errBody='';try{var ej=await r.json();errBody=ej.error&&ej.error.message?ej.error.message:JSON.stringify(ej);}catch(x){errBody=r.statusText;}throw new Error('API错误('+r.status+'): '+errBody);}
         var j;try{j=await r.json();}catch(e){throw new Error('API返回的不是有效JSON，可能API地址不正确');}
         var c=j&&j.choices&&j.choices[0]&&j.choices[0].message?j.choices[0].message.content:null;
         if(!c||!c.trim()){var finishReason=j&&j.choices&&j.choices[0]?j.choices[0].finish_reason:'';if(finishReason==='length')throw new Error('API返回为空(finish_reason=length)，模型输出被截断，请增大max_tokens或缩短原文');if(finishReason==='content_filter')throw new Error('API返回为空(content_filter)，内容被安全过滤器拦截');throw new Error('API返回空内容(finish_reason='+(finishReason||'未知')+')，请检查模型是否正常');}
