@@ -142,7 +142,7 @@
             }
             if(!r.ok){
                 var errBody='';
-                try{varej=await r.json();errBody=ej.error&&ej.error.message?ej.error.message:JSON.stringify(ej);}catch(x){errBody=r.statusText;}
+                try{var ej=await r.json();errBody=ej.error&&ej.error.message?ej.error.message:JSON.stringify(ej);}catch(x){errBody=r.statusText;}
                 throw new Error('API错误('+r.status+'): '+errBody);
             }
             var j;try{j=await r.json();}catch(e){throw new Error('API返回的不是有效JSON，可能API地址不正确');}
@@ -284,7 +284,7 @@
         var menu=pJQ('#extensionsMenu');
         if(menu.length&&!pJQ('#'+_id+'-mi').length){
             var wrap=pJQ('<div class="extension_container interactable" id="'+_id+'-mi" tabindex="0" style="position:relative"></div>');
-            var item=pJQ('<div class="list-group-item flex-container flexGap5interactable" title="猫猫审校器"><div class="fa-fw fa-solid fa-paw extensionsMenuExtensionButton"></div><span>猫猫审校器</span></div>');
+            var item=pJQ('<div class="list-group-item flex-container flexGap5 interactable" title="猫猫审校器"><div class="fa-fw fa-solid fa-paw extensionsMenuExtensionButton"></div><span>猫猫审校器</span></div>');
             var dot=pJQ('<span id="'+_id+'-updot" style="display:none;width:9px;height:9px;background:#ef4444;border-radius:50%;position:absolute;top:4px;right:4px;box-shadow:0 0 4px rgba(239,68,68,0.6);animation:mp-dot-pulse 1.5s infinite"></span>');
             if(!pJQ('#mp-dot-style').length)pJQ('<style id="mp-dot-style">@keyframes mp-dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(0.8)}}</style>').appendTo(pJQ('head'));
             item.on('click',async function(ev){ev.stopPropagation();var btn=pJQ('#extensionsMenuButton');if(btn.length&&menu.is(':visible')){btn.trigger('click');await new Promise(function(r){setTimeout(r,120);});}await _openUI();});
