@@ -1,4 +1,4 @@
-(function(){'use strict';var _id='maoProof',_ver='2.9.2',_flag=_id+'_v'+_ver,_popup=null,_busy=false,_activeStyle=null,_jq=null,_tt=null,_ok=false,_hasUpdate=false,_remoteVer='';var K={ap:_id+'_ap',wd:_id+'_wd',pt:_id+'_pt',rl:_id+'_rl',sw:_id+'_sw',rt:_id+'_rt',tp:_id+'_tp',sp:_id+'_sp',si:_id+'_si',lw:_id+'_lw',spC:_id+'_spCustom',siC:_id+'_siCustom'};var TK=_id+'_themes',LK=_id+'_logs',PK=_id+'_prompts',RK=_id+'_rlpresets',CK=_id+'_checked',BK=_id+'_backup',AK=_id+'_apipresets';var C={url:'',key:'',mdl:'',sw:false,rt:0,tp:0.3,wd:[],pt:[],rl:'',sp:'',si:'',lw:[]};var _CDN='https://testingcf.jsdelivr.net/gh/Shwx0324/Cat-s-Treasure-Box@main/%E7%8C%AB%E7%8C%AB%E5%AE%A1%E6%A0%A1%E5%99%A8.js';var _RAW='https://raw.githubusercontent.com/Shwx0324/Cat-s-Treasure-Box/main/%E7%8C%AB%E7%8C%AB%E5%AE%A1%E6%A0%A1%E5%99%A8.js';
+(function(){'use strict';var _id='maoProof',_ver='2.9.3',_flag=_id+'_v'+_ver,_popup=null,_busy=false,_activeStyle=null,_jq=null,_tt=null,_ok=false,_hasUpdate=false,_remoteVer='';var K={ap:_id+'_ap',wd:_id+'_wd',pt:_id+'_pt',rl:_id+'_rl',sw:_id+'_sw',rt:_id+'_rt',tp:_id+'_tp',sp:_id+'_sp',si:_id+'_si',lw:_id+'_lw',spC:_id+'_spCustom',siC:_id+'_siCustom'};var TK=_id+'_themes',LK=_id+'_logs',PK=_id+'_prompts',RK=_id+'_rlpresets',CK=_id+'_checked',BK=_id+'_backup',AK=_id+'_apipresets';var C={url:'',key:'',mdl:'',sw:false,rt:0,tp:0.3,wd:[],pt:[],rl:'',sp:'',si:'',lw:[]};var _CDN='https://testingcf.jsdelivr.net/gh/Shwx0324/Cat-s-Treasure-Box@main/%E7%8C%AB%E7%8C%AB%E5%AE%A1%E6%A0%A1%E5%99%A8.js';var _RAW='https://raw.githubusercontent.com/Shwx0324/Cat-s-Treasure-Box/main/%E7%8C%AB%E7%8C%AB%E5%AE%A1%E6%A0%A1%E5%99%A8.js';
 
     var _defSI='你是一个专业的文本润色与审校工具。\n'
 +'你的工作是在用户提供的原文基础上进行修改润色：替换禁词、处理限制词和禁用句式，同时根据用户的额外指令对文本进行改写优化。\n'
@@ -65,7 +65,7 @@
     var GK=_id+'_apigroup';
     function _loadAG(){try{var r=localStorage.getItem(GK);if(r)return JSON.parse(r);}catch(x){}return{enabled:false,list:[],current:0};}
     function _saveAG(d){try{localStorage.setItem(GK,JSON.stringify(d));}catch(x){}}
-    function _nextAPI(){var ag=_loadAG();if(!ag.enabled||ag.list.length===0)return false;ag.current=(ag.current+1)%ag.list.length;var item=ag.list[ag.current];C.url=item.url||'';C.key=item.key||'';C.mdl=item.mdl||'';_s();_saveAG(ag);console.log('[猫猫审校]轮询切换到: '+item.name+' ('+C.mdl+')');return true;}
+    function _nextAPI(){var ag=_loadAG();if(!ag.enabled||ag.list.length===0)return false;ag.current=(ag.current+1)%ag.list.length;var item=ag.list[ag.current];C.url=item.url||'';C.key=item.key||'';C.mdl=item.mdl||'';_s();_saveAG(ag);return true;}
     function _applyAGCurrent(){var ag=_loadAG();if(!ag.enabled||ag.list.length===0)return;var item=ag.list[ag.current%ag.list.length];C.url=item.url||'';C.key=item.key||'';C.mdl=item.mdl||'';_s();}
     function _refreshAGList(){if(!_popup)return;var ag=_loadAG();var $box=_popup.find('#mp-aglist');if(ag.list.length===0){$box.html('<div class="mp-nt" style="text-align:center">暂无API，请从接口预设添加</div>');return;}var h='';ag.list.forEach(function(item,i){h+='<div style="display:flex;align-items:center;gap:6px;padding:4px 0"><span style="font-size:.75rem;'+(i===ag.current&&ag.enabled?'color:#7c3aed;font-weight:700':'color:#64748b')+'">'+(i===ag.current&&ag.enabled?'▶ ':' ')+(i+1)+'. '+_e(item.name)+'</span><span style="font-size:.65rem;color:#94a3b8">'+_e(item.mdl||'未设模型')+'</span><button class="mp-bt mp-b2 mp-ag-del" data-idx="'+i+'" style="padding:2px 6px;font-size:.65rem;margin-left:auto">✕</button></div>';});$box.html(h);}
     function _hash(s){var h=0;for(var i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}return String(h);}
@@ -79,7 +79,7 @@
     function _clearBackup(){try{localStorage.removeItem(BK);}catch(x){}}
     function _extractTags(txt){var tags=[];var re=/<([^\/>\s]+)[^>]*>[\s\S]*?<\/\1>/g;var m;while((m=re.exec(txt))!==null){tags.push({tag:m[1],full:m[0]});}return tags;}
     function _cmpVer(a,b){var pa=a.split('.').map(Number),pb=b.split('.').map(Number);for(var i=0;i<Math.max(pa.length,pb.length);i++){var na=pa[i]||0,nb=pb[i]||0;if(nb>na)return 1;if(na>nb)return-1;}return 0;}
-    function _silentCheck(){var urls=[_RAW,_CDN];function tryFetch(i){if(i>=urls.length)return;fetch(urls[i]+'?t='+Date.now()).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(function(code){if(!code)return;var m=code.match(/_ver='([^']+)'/);if(!m)return;var rv=m[1];if(_cmpVer(_ver,rv)>0){console.log('[猫猫审校]发现新版本 v'+rv);try{eval(code);_hasUpdate=false;_remoteVer='';_hideDot();_msg('success','✅ 已自动更新到v'+rv+'，请关闭面板重新打开',{timeOut:6000});}catch(ex){_hasUpdate=true;_remoteVer=rv;_showDot();_msg('warning','⚠️ 发现v'+rv+'，自动更新失败，请手动更新',{timeOut:5000});}}else{_hasUpdate=false;_remoteVer='';_hideDot();}}).catch(function(){tryFetch(i+1);});}tryFetch(0);}
+    function _silentCheck(){var urls=[_RAW,_CDN];function tryFetch(i){if(i>=urls.length)return;fetch(urls[i]+'?t='+Date.now()).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(function(code){if(!code)return;var m=code.match(/_ver='([^']+)'/);if(!m)return;var rv=m[1];if(_cmpVer(_ver,rv)>0){try{eval(code);_hasUpdate=false;_remoteVer='';_hideDot();_msg('success','✅ 已自动更新到v'+rv+'，请关闭面板重新打开',{timeOut:6000});}catch(ex){_hasUpdate=true;_remoteVer=rv;_showDot();_msg('warning','⚠️ 发现v'+rv+'，自动更新失败，请手动更新',{timeOut:5000});}}else{_hasUpdate=false;_remoteVer='';_hideDot();}}).catch(function(){tryFetch(i+1);});}tryFetch(0);}
     function _fetchUpdate(){var urls=[_RAW,_CDN];function tryFetch(i){if(i>=urls.length){_msg('error','所有更新源均不可用',{timeOut:3000});return Promise.reject();}return fetch(urls[i]+'?t='+Date.now()).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).catch(function(){return tryFetch(i+1);});}return tryFetch(0);}
     function _getPJQ(){var pw;try{pw=window.parent||window;}catch(x){pw=window;}return pw.jQuery||pw.$||_jq;}
     function _showDot(){var pJQ=_getPJQ();if(!pJQ)return;pJQ('#'+_id+'-updot').show();}
@@ -107,58 +107,97 @@
     async function _call(txt,overInfo){
         if(!C.url)throw new Error('未配置API地址，请在「接口」页填写');
         if(!C.mdl)throw new Error('未选择模型，请在「接口」页加载并选择模型');
+        try{await fetch(C.url.trim(),{method:'HEAD',mode:'no-cors',signal:AbortSignal.timeout(8000)});}catch(e){}
         var h={'Content-Type':'application/json'};if(C.key)h['Authorization']='Bearer '+C.key;
         var sys=_sysP(overInfo);
         var userMsg='以下是需要审校修改的原文（共'+txt.length+'字）。\n请在原文基础上进行修改，替换禁词/限制词/禁用句式，并按照指令润色。\n输出修改后的完整文本，不能续写也不能删减原文内容。\n\n---原文开始---\n'+txt+'\n---原文结束---';
-        var r,body=JSON.stringify({model:C.mdl,temperature:C.tp,stream:false,messages:[{role:'system',content:sys},{role:'user',content:userMsg}]});
         var timeoutMs=Math.max(60000,Math.min(300000,txt.length*50));
         var ag=_loadAG();
         var maxSwitch=ag.enabled&&ag.list.length>1?ag.list.length:1;
-        var lastErr='',switched=false;
+        var lastErr='',switched=false,c='',finishReason='',r;
         for(var _si=0;_si<maxSwitch;_si++){
             if(_si>0){
                 _nextAPI();switched=true;
                 h={'Content-Type':'application/json'};if(C.key)h['Authorization']='Bearer '+C.key;
-                body=JSON.stringify({model:C.mdl,temperature:C.tp,stream:false,messages:[{role:'system',content:sys},{role:'user',content:userMsg}]});
                 _msg('info','🔄 轮询切换到: '+C.mdl,{timeOut:2000});
                 await new Promise(function(ok){setTimeout(ok,1000);});
             }
+            var body=JSON.stringify({model:C.mdl,temperature:C.tp,stream:true,messages:[{role:'system',content:sys},{role:'user',content:userMsg}]});
+            var tid=null;
             try{
                 var ctrl=new AbortController();
-                var tid=setTimeout(function(){ctrl.abort();},timeoutMs);
+                tid=setTimeout(function(){ctrl.abort();},timeoutMs);
                 r=await fetch(_ep(),{method:'POST',headers:h,body:body,signal:ctrl.signal,keepalive:true});
-                clearTimeout(tid);
             }catch(e){
+                if(tid)clearTimeout(tid);
                 if(e.name==='AbortError')throw new Error('请求超时('+Math.round(timeoutMs/1000)+'秒)，请检查网络或缩短文本');
                 throw new Error('网络请求失败: '+e.message+'，请检查API地址和网络');
             }
-            if(r.status===401)throw new Error('API认证失败(401)，请检查API Key是否正确');
-            if(r.status===403)throw new Error('API拒绝访问(403)，请检查API Key权限');
-            if(r.status===404)throw new Error('API地址错误(404)，请检查地址和模型名称');
+            if(r.status===401){clearTimeout(tid);throw new Error('API认证失败(401)，请检查API Key');}
+            if(r.status===403){clearTimeout(tid);throw new Error('API拒绝访问(403)，请检查API Key权限');}
+            if(r.status===404){clearTimeout(tid);throw new Error('API地址错误(404)，请检查地址和模型名称');}
             if(r.status===429||r.status>=500){
+                clearTimeout(tid);
                 lastErr='API返回'+r.status;
                 if(_si<maxSwitch-1)continue;
                 throw new Error(lastErr+(switched?'，已轮询所有API均失败':'')+'，请稍后再试');
             }
             if(!r.ok){
-                var errBody='';
+                clearTimeout(tid);var errBody='';
                 try{var ej=await r.json();errBody=ej.error&&ej.error.message?ej.error.message:JSON.stringify(ej);}catch(x){errBody=r.statusText;}
                 throw new Error('API错误('+r.status+'): '+errBody);
             }
-            var j;try{j=await r.json();}catch(e){throw new Error('API返回的不是有效JSON，可能API地址不正确');}
-            var c=j&&j.choices&&j.choices[0]&&j.choices[0].message?j.choices[0].message.content:null;
-            if(!c||!c.trim()){
-                var finishReason=j&&j.choices&&j.choices[0]?j.choices[0].finish_reason:'';
-                if(finishReason==='content_filter'){lastErr='内容被安全过滤器拦截';if(_si<maxSwitch-1)continue;throw new Error(lastErr+(switched?'，已轮询所有API均被拦截':''));}
-                if(finishReason==='length'){lastErr='模型输出被截断(max_tokens不足)';if(_si<maxSwitch-1)continue;throw new Error(lastErr+(switched?'，已轮询所有API均截断':'')+'，请缩短原文');}
-                lastErr='API返回空内容(finish_reason='+(finishReason||'未知')+')';
+            try{
+                c='';finishReason='';
+                var contentType=r.headers.get('content-type')||'';
+                if(contentType.indexOf('application/json')>=0){
+                    var j=await r.json();
+                    c=j&&j.choices&&j.choices[0]&&j.choices[0].message?j.choices[0].message.content:'';
+                    finishReason=j&&j.choices&&j.choices[0]?j.choices[0].finish_reason:'';
+                }else{
+                    var reader=r.body.getReader();
+                    var decoder=new TextDecoder('utf-8');
+                    var buffer='';
+                    while(true){
+                        var readResult=await reader.read();var done=readResult.done,value=readResult.value;
+                        if(done)break;
+                        buffer+=decoder.decode(value,{stream:true});
+                        var lines=buffer.split('\n');
+                        buffer=lines.pop();
+                        for(var _li=0;_li<lines.length;_li++){
+                            var line=lines[_li].trim();
+                            if(line.indexOf('data: ')===0){
+                                var dStr=line.substring(6);
+                                if(dStr==='[DONE]')continue;
+                                try{
+                                    var chunk=JSON.parse(dStr);
+                                    var delta=chunk.choices&&chunk.choices[0]?chunk.choices[0].delta:null;
+                                    if(delta&&delta.content)c+=delta.content;
+                                    var fr=chunk.choices&&chunk.choices[0]?chunk.choices[0].finish_reason:null;
+                                    if(fr)finishReason=fr;
+                                }catch(x){}
+                            }
+                        }
+                    }
+                }
+            }catch(e){
+                clearTimeout(tid);
+                if(e.name==='AbortError')throw new Error('读取流超时('+Math.round(timeoutMs/1000)+'秒)');
+                lastErr='解析API返回失败';
                 if(_si<maxSwitch-1)continue;
-                throw new Error(lastErr+(switched?'，已轮询所有API均空回':'')+'，请检查模型是否正常');
+                throw new Error('读取响应失败: '+e.message);
+            }
+            clearTimeout(tid);
+            if(!c||!c.trim()){
+                if(finishReason==='content_filter'){lastErr='内容被安全过滤器拦截';if(_si<maxSwitch-1)continue;throw new Error(lastErr+(switched?'，所有API均被拦截':''));}
+                if(finishReason==='length'){lastErr='模型输出被截断(max_tokens不足)';if(_si<maxSwitch-1)continue;throw new Error(lastErr+(switched?'，所有API均截断':'')+'，请缩短原文');}
+                lastErr='API返回空内容';
+                if(_si<maxSwitch-1)continue;
+                throw new Error(lastErr+(switched?'，所有API均空回':'')+'，请检查模型');
             }
             break;
         }
         var cleaned=_clean(c);
-        if(cleaned.length<5)throw new Error('API返回内容过短('+cleaned.length+'字)，可能模型未正确理解指令');
         var v=_validateResult(txt,cleaned);
         if(!v.ok){console.warn('[猫猫审校]拦截: '+v.reason);return{changed:false,text:'',fixes:[],rejected:true,reason:v.reason};}
         if(cleaned.replace(/\s+/g,'')===txt.replace(/\s+/g,''))return{changed:false,text:'',fixes:[]};
@@ -175,7 +214,8 @@
     function _refreshLog(){if(!_popup)return;var logs=_loadLogs();var $box=_popup.find('#mp-logbox');if(!$box.length)return;if(!logs.length){$box.html('<div class="mp-nt" style="text-align:center;padding:20px">暂无记录</div>');return;}var h='';for(var i=logs.length-1;i>=0;i--){var log=logs[i];h+='<div class="mp-logitem"><div class="mp-logtime">'+_e(log.ts)+' · '+log.fl.length+'处</div>';log.fl.forEach(function(f){h+='<div class="mp-logfix"><span class="mp-logold">'+_e(f.s||'')+'</span><span class="mp-logarrow">→</span><span class="mp-lognew">'+_e(f.d||'')+'</span>';if(f.r)h+='<span class="mp-logreason">('+_e(f.r)+')</span>';h+='</div>';});h+='</div>';}$box.html(h);}
     function _refreshPTSel(){if(!_popup)return;var pd=_loadPT();var $s=_popup.find('#mp-ptsel');$s.empty().append('<option value="">— 选择预设 —</option>');pd.list.forEach(function(p){$s.append('<option value="'+_e(p.name)+'"'+(p.name===pd.active?' selected':'')+'>'+_e(p.name)+'</option>');});}
     function _refreshRLSel(){if(!_popup)return;var rd=_loadRL();var $s=_popup.find('#mp-rlsel');$s.empty().append('<option value="">— 选择预设 —</option>');rd.list.forEach(function(p){$s.append('<option value="'+_e(p.name)+'"'+(p.name===rd.active?' selected':'')+'>'+_e(p.name)+'</option>');});}
-                async function _openUI(){
+
+    async function _openUI(){
         if(!_ok){var ctx0=_ctx();if(ctx0&&ctx0.chat){_ok=true;}else{_msg('error','请先打开一个聊天');return;}}_l();
         var td=_loadTh();var allTh=_presets.concat(td.list);var thOpts='<option value="">— 选择 —</option>';allTh.forEach(function(t){thOpts+='<option value="'+_e(t.name)+'"'+(t.name===td.active?' selected':'')+'>'+_e(t.name)+'</option>';});var curCSS='';if(td.active){var ff=allTh.find(function(t){return t.name===td.active;});if(ff)curCSS=ff.css;}
         var pd=_loadPT();var ptOpts='<option value="">— 选择预设 —</option>';pd.list.forEach(function(p){ptOpts+='<option value="'+_e(p.name)+'"'+(p.name===pd.active?' selected':'')+'>'+_e(p.name)+'</option>';});
@@ -209,7 +249,7 @@
 +'.mp-badge{display:inline-block;font-size:.6rem;padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:600}.mp-badge-def{background:#e0e7ff;color:#4338ca}.mp-badge-cus{background:#fef3c7;color:#92400e}'
 +'</style>';
         var H='<div id="'+_id+'-popup">'+S
-+'<div class="mp-hdr"><div class="mp-t1">🔍 AI输出审校器</div><div class="mp-t2">禁词替换 · 限制用词 · 润色改写</div><div class="mp-cr">制作：是猫猫呦|仅发精神病院| v'+_ver+' <button class="mp-bt mp-b-upd" id="mp-upd" style="'+updBtnStyle+'">'+updBtnText+'</button></div></div>'
++'<div class="mp-hdr"><div class="mp-t1">🔍 AI输出审校器</div><div class="mp-t2">禁词替换 · 限制用词 · 润色改写</div><div class="mp-cr">制作：是猫猫呦 v'+_ver+' <button class="mp-bt mp-b-upd" id="mp-upd" style="'+updBtnStyle+'">'+updBtnText+'</button></div></div>'
 +'<div class="mp-topbar"><div style="display:flex;align-items:center"><input type="checkbox" id="mp-on"'+(C.sw?' checked':'')+'><label for="mp-on">自动审校</label></div><span id="mp-pill" class="mp-pill '+(C.sw?'mp-pill-on':'mp-pill-off')+'">'+(C.sw?'●运行中':'○ 已关闭')+'</span></div>'
 +'<div class="mp-tabs"><div class="mp-tab active" data-tab="t1"><span class="mp-tab-icon">📋</span>规则</div><div class="mp-tab" data-tab="t2"><span class="mp-tab-icon">⚡</span>接口</div><div class="mp-tab" data-tab="t3"><span class="mp-tab-icon">🤖</span>提示词</div><div class="mp-tab" data-tab="t4"><span class="mp-tab-icon">🎯</span>审校</div><div class="mp-tab" data-tab="t5"><span class="mp-tab-icon">🎨</span>外观</div></div>'
 +'<div class="mp-page active" id="mp-t1">'
@@ -233,8 +273,9 @@
 +'</div>';
         popupFn(H,popupType.DISPLAY,'猫猫审校器',{wide:true,large:true,allowVerticalScrolling:true,buttons:[],callback:function(){_popup=null;}});
         setTimeout(function(){var f=null;_jq('dialog[open]').each(function(){var x=_jq(this).find('#'+_id+'-popup');if(x.length){f=x;return false;}});if(!f)return;_popup=f;_bindUI();_refreshLog();},350);
-                }
-                function _bindUI(){
+    }
+
+    function _bindUI(){
         if(!_popup)return;var P=_popup,J=_jq;
         P.find('.mp-tab').on('click',function(){var tab=J(this).attr('data-tab');P.find('.mp-tab').removeClass('active');J(this).addClass('active');P.find('.mp-page').removeClass('active');P.find('#mp-'+tab).addClass('active');});
         P.find('#mp-on').on('change',function(){C.sw=this.checked;_s();P.find('#mp-pill').removeClass('mp-pill-on mp-pill-off').addClass(C.sw?'mp-pill-on':'mp-pill-off').html(C.sw?'● 运行中':'○ 已关闭');_msg('info',C.sw?'已启用':'已关闭');});
@@ -245,7 +286,7 @@
         P.find('#mp-apdel').on('click',function(){var name=P.find('#mp-apsel').val();if(!name){_msg('warning','选择要删除的预设');return;}var ad=_loadAP();ad.list=ad.list.filter(function(p){return p.name!==name;});if(ad.active===name)ad.active='';_saveAP(ad);_refreshAPSel();P.find('#mp-apinfo').text(ad.active?'当前：'+ad.active:'未使用预设');_msg('info','已删除「'+name+'」');});
         _refreshAGList();
         P.find('#mp-agen').on('change',function(){var ag=_loadAG();ag.enabled=this.checked;_saveAG(ag);P.find('#mp-agpill').removeClass('mp-pill-on mp-pill-off').addClass(ag.enabled?'mp-pill-on':'mp-pill-off').html(ag.enabled?'● 已启用':'○ 已关闭');if(ag.enabled&&ag.list.length>0)_applyAGCurrent();_msg('info',ag.enabled?'轮询已启用':'轮询已关闭');});
-        P.find('#mp-agaddbtn').on('click',function(){var name=P.find('#mp-agadd').val();if(!name){_msg('warning','选择一个接口预设');return;}var ad=_loadAP();var found=ad.list.find(function(p){return p.name===name;});if(!found){_msg('error','预设不存在，请先在接口预设中保存');return;}var ag=_loadAG();if(ag.list.some(function(x){return x.name===name;})){_msg('warning','「'+name+'」已在轮询组中');return;}ag.list.push({name:found.name,url:found.url,key:found.key,mdl:found.mdl,tp:found.tp,rt:found.rt});_saveAG(ag);_refreshAGList();_msg('success','已添加「'+name+'」到轮询组');});
+        P.find('#mp-agaddbtn').on('click',function(){var name=P.find('#mp-agadd').val();if(!name){_msg('warning','选择一个接口预设');return;}var ad=_loadAP();var found=ad.list.find(function(p){return p.name===name;});if(!found){_msg('error','预设不存在');return;}var ag=_loadAG();if(ag.list.some(function(x){return x.name===name;})){_msg('warning','「'+name+'」已在轮询组中');return;}ag.list.push({name:found.name,url:found.url,key:found.key,mdl:found.mdl,tp:found.tp,rt:found.rt});_saveAG(ag);_refreshAGList();_msg('success','已添加「'+name+'」到轮询组');});
         P.on('click','.mp-ag-del',function(){var idx=parseInt(J(this).attr('data-idx'));var ag=_loadAG();ag.list.splice(idx,1);if(ag.current>=ag.list.length)ag.current=0;_saveAG(ag);_refreshAGList();_msg('info','已移除');});
         P.find('#mp-agclear').on('click',function(){var ag=_loadAG();ag.list=[];ag.current=0;_saveAG(ag);_refreshAGList();_msg('info','轮询组已清空');});
         P.find('#mp-tst').on('click',async function(){var b=J(this);b.prop('disabled',true).text('…');C.url=P.find('#mp-url').val().trim();C.key=P.find('#mp-key').val().trim();C.mdl=P.find('#mp-mdl').val()||'';try{var r=await _call('她不由自主地叹了口气，不由自主地笑了。');_msg('success','测试'+(r.changed?'成功,有修正':'成功'));}catch(e){_msg('error',e.message);}b.prop('disabled',false).text('🧪 测试');});
