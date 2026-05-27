@@ -111,7 +111,7 @@
         var sys=_sysP(overInfo);
         var userMsg='以下是需要审校修改的原文（共'+txt.length+'字）。\n请在原文基础上进行修改，替换禁词/限制词/禁用句式，并按照指令润色。\n输出修改后的完整文本，不能续写也不能删减原文内容。\n\n---原文开始---\n'+txt+'\n---原文结束---';
         var r,body=JSON.stringify({model:C.mdl,temperature:C.tp,stream:false,messages:[{role:'system',content:sys},{role:'user',content:userMsg}]});
-        var timeoutMs=Math.max(30000,Math.min(120000,txt.length*30));
+        var timeoutMs=Math.max(60000,Math.min(300000,txt.length*50));
         var ag=_loadAG();
         var maxSwitch=ag.enabled&&ag.list.length>1?ag.list.length:1;
         var lastErr='',switched=false;
